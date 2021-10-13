@@ -4,7 +4,7 @@ Term Project Repository for team TeamRANKS
 Team Members:
 Daniel
 Nick
-Selena
+Selina
 Sejal
 
 Project: ResearchConnect
