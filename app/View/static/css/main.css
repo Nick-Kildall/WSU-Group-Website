@@ -1,0 +1,49 @@
+body {
+    margin: 1px 1px 1px 15px;
+    padding: 1px;
+    font-family: Tahoma;
+    text-align: left;
+  
+}
+.nav-container {
+    background:#f6f6f6;
+    font-family: Tahoma;
+    font-size: 12px;
+    height: 32px;
+    text-transform: uppercase;
+}
+a:hover {
+	color:#2387D9;
+}
+
+.button {
+    width : 65px;
+    padding : 3px;    
+    font-size: 16px;
+    margin : 5px;
+    padding : 5px;
+    border: 1px solid lightgray;
+}
+.button:hover {
+    background-color: 157dd3;
+    color: white;
+    cursor:pointer;
+}
+
+.posttable { 
+    width : 100%;
+    margin: 0px;
+}
+
+.posttitle {
+    text-align: center;
+    font-weight: bold;
+}
+
+.useritem{
+    text-align: center;
+    padding: 3px;
+    margin: 4px 3px 4px 3px;
+    color: crimson; 
+    text-transform: uppercase;
+}
