@@ -12,5 +12,15 @@ class FacultyEditForm(FlaskForm):
     phone_num = StringField('Phone Number',  validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-    
-
+class StudentEditForm(FlaskForm):
+    password = PasswordField('Password',validators=[DataRequired()])
+    password2 = PasswordField('Repeat Password',validators=[DataRequired(),EqualTo('password')])
+    phone_num = StringField('Phone Number',  validators=[DataRequired()])
+    major = StringField('Major',  validators=[DataRequired()])
+    gpa = StringField('GPA',  validators=[DataRequired()])
+    grad_date = StringField('Graduation Date',  validators=[DataRequired()])
+    tech_electives = StringField('Technical Electives',  validators=[DataRequired()])
+    languages = StringField('Languages',  validators=[DataRequired()])
+    prior_exp = StringField('Prior Experience',  validators=[DataRequired()])
+    # Add interests
+    submit = SubmitField('Submit')
