@@ -3,9 +3,9 @@ import sys
 from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import  current_user, login_required
-from app.Controller.forms import FacultyEditForm, StudentEditForm, StudentRegistrationForm
+from app.Controller.forms import FacultyEditForm, StudentEditForm
 from config import Config
-from app.Model.models import Faculty
+from app.Model.models import Faculty, Student
 
 from app import db
 
@@ -17,29 +17,6 @@ bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
 @bp_routes.route('/index', methods=['GET'])
 def index():
     return render_template('index.html')
-
-@bp_routes.route('/student_registration', methods=['GET','POST'])
-def student_registration():
-    srform = StudentRegistrationForm()
-    # if request.method=='POST':
-    #     if sform.validate_on_submit():
-    #         current_user.username = srform.username.data
-    #         current_user.set_password(srform.password.data) 
-    #         current_user.phone_num = srform.phone_num.data
-    #         current_user.first_name = srform.first_name.data
-    #         current_user.last_name = srform.last_name.data
-    #         current_user.wsu_id = srform.wsu_id.data
-    #         current_user.major = srform.major.data
-    #         current_user.gpa = srform.gpa.data
-    #         current_user.grad_date = srform.grad_date.data
-    #         current_user.tech_electives = srform.tech_electives.data
-    #         current_user.languages = srform.languages.data
-    #         current_user.prior_exp = srform.prior_exp.data
-    #         db.session.add(current_user)
-    #         db.session.commit()
-    #         flash("Your changes have been saved")
-    #         return render_template(url_for('routes.index'))
-    return render_template('student_registration.html', title='Student Registration', form=srform)
 
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
 def f_edit_profile():
@@ -80,6 +57,7 @@ def s_edit_profile():
     #     sform.tech_electives.data = current_user.tech_electives
     #     sform.languages.data = current_user.languages
     #     sform.prior_exp.data = current_user.prior_exp
+    #     sform.interest.data = current_user.interest
     # else:
     #     pass 
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)

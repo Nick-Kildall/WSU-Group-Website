@@ -69,6 +69,13 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %} 
 
+            <p> {{ form.interest.label }} </p>
+            <p> {{ form.interest(class = "forminput") }} </p>
+                
+            {% for error in form.interest.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %} 
+
             <p> {{ form.submit(class='button') }} </p>
         </form>
     {% endif %}
