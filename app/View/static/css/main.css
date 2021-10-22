@@ -47,3 +47,11 @@ a:hover {
     color: crimson; 
     text-transform: uppercase;
 }
+
+.forminput {
+    margin: 5px;
+    padding: 5px;
+    font: Tahoma;
+    font-size: medium;
+    width: 50%;
+}

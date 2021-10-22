@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Student Edit Form</h1>
+    <h1>Student Registration Form</h1>
     {% if form %}
         <form action="" method="POST">
             {{ form.hidden_tag() }}
+
+            <p> {{ form.username.label }} </p>
+            <p> {{ form.username(class = "forminput") }} </p>
+
+            {% for error in form.username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
 
             <p> {{ form.password.label }} </p>
             <p> {{ form.password(class = "forminput") }} </p>
@@ -17,6 +24,20 @@
             <p> {{ form.password2(class = "forminput") }} </p>
 
             {% for error in form.password2.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+
+            <p> {{ form.first_name.label }} </p>
+            <p> {{ form.first_name(class = "forminput") }} </p>
+
+            {% for error in form.first_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+
+            <p> {{ form.last_name.label }} </p>
+            <p> {{ form.last_name(class = "forminput") }} </p>
+
+            {% for error in form.last_name.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
 
