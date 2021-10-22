@@ -71,4 +71,15 @@ def s_edit_profile():
     #         db.session.commit()
     #         flash("Your changes have been saved")
     #         return render_template(url_for('routes.index'))
+    # elif (request.method == "GET"):
+    #     # Populate DB with User data
+    #     sform.phone_num.data = current_user.phone_num
+    #     sform.major.data = current_user.major
+    #     sform.gpa.data = current_user.gpa
+    #     sform.grad_date.data = current_user.grad_date
+    #     sform.tech_electives.data = current_user.tech_electives
+    #     sform.languages.data = current_user.languages
+    #     sform.prior_exp.data = current_user.prior_exp
+    # else:
+    #     pass 
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
