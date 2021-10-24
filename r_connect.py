@@ -7,7 +7,8 @@ app = create_app()
 def initDB(*args, **kwargs):
     db.create_all()
     if Interest.query.count() == 0:
-        interests = ['AI','Front End Developement', 'Back End Developement', 'Data Science', 'Software Engineering']
+        interests = ['Artificial Intelligence/Machine Learning','Front End Developement', 'Back End Developement', 'Data Science', 'Software Engineering',
+            'Web Development', 'Full Stack', 'Mobile Application', 'Game Development', 'Cybersecurity', 'Financial Analysis', 'Blockchain']
         for i in interests:
             db.session.add(Interest(name=i))
         db.session.commit()
