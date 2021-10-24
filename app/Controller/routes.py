@@ -16,6 +16,8 @@ bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
 @bp_routes.route('/', methods=['GET'])
 @bp_routes.route('/index', methods=['GET'])
 def index():
+    
+
     return render_template('index.html')
 
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
