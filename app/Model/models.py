@@ -16,6 +16,17 @@ studentInterests = db.Table('studentInterests',
 )
 
 
+# this is the beginning for the post model. i have added the details i need for
+# the _post.html and index.html page
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+#    interests = db.relationship("Interest", secondary = studentInterests,
+#        primaryjoin=(studentInterests.c.student_id == id),
+#        backref=db.backref('studentInterests',
+#        lazy='dynamic'), lazy='dynamic')
+
+
+
 class Faculty(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     username=db.Column(db.String(64),unique=True,index=True)

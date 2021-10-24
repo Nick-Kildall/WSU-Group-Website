@@ -1,5 +1,5 @@
 <!--
-    
+
 
 
 -->
@@ -10,8 +10,13 @@
 
     <h1>Welcome to Research Connect!</h1>
 
-    <!-- {% for post in posts %}
-       {% include '_post.html' %} 
-    {% endfor %} -->
-    
+    <br>Hello, {{ current_user.firstname }} {{ current_user.lastname }}
+
+    {% for post in posts %}
+        {% for interest in post.interests %}
+            {% if interest in current_user.interests %}
+                {% include '_post.html' %} 
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
 {% endblock %}

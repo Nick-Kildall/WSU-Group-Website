@@ -16,8 +16,6 @@ bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
 @bp_routes.route('/', methods=['GET'])
 @bp_routes.route('/index', methods=['GET'])
 def index():
-    
-
     return render_template('index.html')
 
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
@@ -63,3 +61,8 @@ def s_edit_profile():
     # else:
     #     pass 
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
+
+
+@bp_routes.route('/apply', methods=['GET','POST'])
+def apply(studentid):
+    return

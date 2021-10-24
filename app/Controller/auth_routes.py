@@ -11,7 +11,7 @@ from app.Model.models import Faculty, Student
 bp_auth = Blueprint('auth', __name__)
 bp_auth.template_folder = Config.TEMPLATE_FOLDER 
 
-@bp_auth.route('/f_register', methods=['GET', 'POST'])
+@bp_auth.route('/faculty_registration', methods=['GET', 'POST'])
 def f_register():
     # if current_user.is_authenticated:
     #     return redirect(url_for('routes.index'))
