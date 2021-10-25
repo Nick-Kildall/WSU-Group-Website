@@ -10,8 +10,8 @@ def load_user(id):
     return Faculty.query.get(int(id))
 
 
-studentInterests = db.Table('studentInterests',
-    db.Column('student_id', db.Integer, db.ForeignKey('student.id')),
+userInterests = db.Table('userInterests',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'))
 )
 
@@ -20,10 +20,19 @@ studentInterests = db.Table('studentInterests',
 # the _post.html and index.html page
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-#    interests = db.relationship("Interest", secondary = studentInterests,
-#        primaryjoin=(studentInterests.c.student_id == id),
-#        backref=db.backref('studentInterests',
-#        lazy='dynamic'), lazy='dynamic')
+
+
+class Interest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20))
+    posts = db.relationship("User", 
+        secondary = userInterests,
+        primaryjoin=(userInterests.c.interest_id == id),
+        backref=db.backref('userInterests',
+        lazy='dynamic'), lazy='dynamic')
+
+    def __repr__(self):
+        return '<ID: {} Name: {}>'.format(self.id,self.name)
 
 
 class User(UserMixin, db.Model):
@@ -35,6 +44,11 @@ class User(UserMixin, db.Model):
     lastname = db.Column(db.String(64))
     phone_num=db.Column(db.String(15))
     wsu_id=db.Column(db.String(10),unique=True,index=True)
+    interests = db.relationship("Interest", 
+        secondary = userInterests,
+        primaryjoin=(userInterests.c.user_id == id),
+        backref=db.backref('userInterests',
+        lazy='dynamic'), lazy='dynamic')
 
     def __repr__(self):
         return '<ID: {} Username: {}>'.format(self.id,self.username)
@@ -54,26 +68,9 @@ class Student(User, db.Model):
     languages = db.Column(db.String(1000))
     prior_exp = db.Column(db.String(10000))
 
-    # The interests relationship could also be moved to the User class, and therefore will be inherited by the
-    # faculty class as well. Faculty
-    interests = db.relationship("Interest", secondary = studentInterests,
-        primaryjoin=(studentInterests.c.student_id == id),
-        backref=db.backref('studentInterests',
-        lazy='dynamic'), lazy='dynamic')
-
 
 class Faculty(User, db.Model):
     pass
-
-
-class Interest(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20))
-
-    def __repr__(self):
-        return '<ID: {} Name: {}>'.format(self.id,self.name)
-
-
 
 
 '''
