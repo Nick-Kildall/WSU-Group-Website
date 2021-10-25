@@ -49,6 +49,7 @@ class User(UserMixin, db.Model):
         primaryjoin=(userInterests.c.user_id == id),
         backref=db.backref('userInterests',
         lazy='dynamic'), lazy='dynamic')
+    account_type = db.Column(db.Integer)
 
     def __repr__(self):
         return '<ID: {} Username: {}>'.format(self.id,self.username)
