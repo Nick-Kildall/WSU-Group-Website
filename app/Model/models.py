@@ -15,12 +15,25 @@ userInterests = db.Table('userInterests',
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'))
 )
 
+openingInterests = db.Table('openingInterests',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'))
+)
+
 
 # this is the beginning for the post model. i have added the details i need for
 # the _post.html and index.html page
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-
+    title = db.Column(db.String(150))
+    endDate = db.Column(db.String(64))
+    startDate = db.Column(db.String(64))
+    description = db.Column(db.String(2500))
+    faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
+    commitment = db.Column(db.Integer)
+    interests = db.relationship('Interest', secondary = openingInterests, primaryjoin=(openingInterests.c.opening_id == id),  backref=db.backref('openingInterests', lazy='dynamic') ,lazy='dynamic')
+    def get_interests(self):
+        return self.interests
 
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,6 +85,17 @@ class Student(User, db.Model):
 class Faculty(User, db.Model):
     pass
 
+class Opening(db.Model):
+   id = db.Column(db.Integer, primary_key=True)
+   title = db.Column(db.String(150))
+   endDate = db.Column(db.String(64))
+   startDate = db.Column(db.String(64))
+   description = db.Column(db.String(2500))
+   faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
+   commitment = db.Column(db.Integer)
+   interests = db.relationship('Interest', secondary = openingInterests, primaryjoin=(openingInterests.c.opening_id == id),  backref=db.backref('openingInterests', lazy='dynamic') ,lazy='dynamic')
+   def get_interests(self):
+       return self.interests
 
 '''
 Sample class inheritence structure as follows

@@ -63,6 +63,8 @@ def s_edit_profile():
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
 
 
+
+
 @bp_routes.route('/apply', methods=['GET','POST'])
 def apply(studentid):
     return
