@@ -31,9 +31,9 @@ class Post(db.Model):
     description = db.Column(db.String(2500))
     faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
     commitment = db.Column(db.Integer)
-    interests = db.relationship('Interest', secondary = openingInterests, primaryjoin=(openingInterests.c.opening_id == id),  backref=db.backref('openingInterests', lazy='dynamic') ,lazy='dynamic')
-    def get_interests(self):
-        return self.interests
+    # interests = db.relationship('Interest', secondary = openingInterests, primaryjoin=(openingInterests.c.opening_id == id),  backref=db.backref('openingInterests', lazy='dynamic') ,lazy='dynamic')
+    # def get_interests(self):
+    #     return self.interests
 
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -93,9 +93,9 @@ class Opening(db.Model):
    description = db.Column(db.String(2500))
    faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
    commitment = db.Column(db.Integer)
-   interests = db.relationship('Interest', secondary = openingInterests, primaryjoin=(openingInterests.c.opening_id == id),  backref=db.backref('openingInterests', lazy='dynamic') ,lazy='dynamic')
-   def get_interests(self):
-       return self.interests
+#    interests = db.relationship('Interest', secondary = openingInterests, primaryjoin=(openingInterests.c.opening_id == id),  backref=db.backref('openingInterests', lazy='dynamic') ,lazy='dynamic')
+#    def get_interests(self):
+#        return self.interests
 
 '''
 Sample class inheritence structure as follows
