@@ -25,7 +25,6 @@ def get_posts(selection):
     else:
         print(selection)
         return Post.query.filter(Post.interests.any(name = selection)).all()
-        #Post.query.filter_by(interests = selection).desc()
 
 
 @bp_routes.route('/', methods=['GET', 'POST'])
