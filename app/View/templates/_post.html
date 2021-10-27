@@ -17,41 +17,39 @@
 <table class = "posttable" style = "width:100%" valign="top">
 
     <td width = "100%">
-    <tr> 
-        <td colspan="3"><div class="posttitle"> {{post.title}} </div>
-        </td>
-    </tr>
-    <tr> 
-        <td colspan="3"><div class="posttitle"> Goal Objective:  </div>
-        </td>
+        <tr> 
+            <td colspan="3"><div class="posttitle"> {{post.title}} </div>
+            </td>
+        </tr>
+        <tr> 
+            <td colspan="3"><div class="postmessage"> 
+                Goal Objective:  
+                <br>
+                {{post.description}}
+            </div>
+            </td>
 
-    </tr>
-    <tr> 
-        <td colspan="3"><div class="posttitle">  {{post.description}} </div>
-        </td>
-
-    </tr>
-   
-    <tr> 
-        <td colspan="3"><div class="posttitle"> Date: {{post.startDate}} - {{post.endDate}} </div>
-        </td>
-    </tr>
-    <tr> 
-        <td colspan="3"><div class="posttitle">  Time Commitment: {{post.commitment}} </div>
-        </td>
-
-    </tr>
-    <tr> 
-        <td colspan="3"><div class="posttitle"> Qualifications:  {{post.qualifications}}  </div>
-        </td>
-
-    </tr>
-    <tr> 
-        <td colspan="3"><div class="posttitle">  test </div>
-        </td>
-
-    </tr>
+        </tr>
     
-</td>
+        <tr> 
+            <td colspan="3"><div class="postmessage"> Date: {{post.startDate}} - {{post.endDate}} </div>
+            </td>
+        </tr>
+        <tr> 
+            <td colspan="3"><div class="postmessage">  Time Commitment: {{post.commitment}} hours / week </div>
+            </td>
+
+        </tr>
+        <tr> 
+            <td colspan="3"><div class="postmessage"> Qualifications:  
+            <br>
+            test
+
+            </div>
+            </td>
+
+        </tr>
+
+    </td>
 
 </table>

@@ -34,21 +34,9 @@ a:hover {
 .posttable { 
     width : 100%;
     margin: 0px;
+    table-layout: auto;
 }
 
-/* .postbox {
-    display: flex;
-    vertical-align: middle;
-    background-color: lightgoldenrodyellow;
-}
-
-.postlist {
-    display: flex;
-    flex-wrap: wrap;
-    width: 80%;
-    padding: 10px;
-    margin: 4px;
-} */
 .postlist{
     display: flex;
     flex-wrap: wrap;
@@ -116,4 +104,12 @@ a:hover {
     width: 60%;
     height: 80px;
     margin: 5px;
+}
+
+.postmessage {
+    font-family: Tahoma;
+    font-size: 16px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    overflow-wrap: normal;
 }
