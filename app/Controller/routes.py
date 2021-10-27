@@ -32,19 +32,19 @@ def get_posts(selection):
 def index():
     interest_list = []
 
-    if (current_user.is_authenticated):
-        # pull current user's interests
-        available_interests = current_user.interests.query.all()
-        interest_list = [(i.id, i.name) for i in available_interests]
-        interest_list.append([len(available_interests), 'Recommended'])
-        interest_list.append([len(available_interests)+1, 'View All'])
-    else:
-        j = 0
-        interest_list.append([1, 'Machine Learning'])
-        interest_list.append([2, 'Full Stack'])
-        interest_list.append([3, 'Financial Modeling'])
-        interest_list.append([4, 'Recommended'])
-        interest_list.append([5, 'View All'])
+    #if (current_user.is_authenticated):
+    #    # pull current user's interests
+    #    available_interests = current_user.interests.query.all()
+    #    interest_list = [(i.id, i.name) for i in available_interests]
+    #    interest_list.append([len(available_interests), 'Recommended'])
+    #    interest_list.append([len(available_interests)+1, 'View All'])
+    #else:
+    j = 0
+    interest_list.append([1, 'Machine Learning'])
+    interest_list.append([2, 'Full Stack'])
+    interest_list.append([3, 'Financial Modeling'])
+    interest_list.append([4, 'Recommended'])
+    interest_list.append([5, 'View All'])
 
     # create sortform
     sort_form = SortForm()
@@ -119,53 +119,53 @@ def edit_profile(userid):
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
 def f_edit_profile():
     eform=FacultyEditForm()
-    # if request.method=='POST':
-    #     if eform.validate_on_submit():
-    #         current_user.phone_num=eform.phone_num.data
-    #         current_user.set_password(eform.password.data)
-    #         db.session.add(current_user)
-    #         db.session.commit()
-    #         flash("Your changes have been saved")
-    #         return render_template(url_for('routes.index'))
+    if request.method=='POST':
+        if eform.validate_on_submit():
+            current_user.phone_num=eform.phone_num.data
+            current_user.set_password(eform.password.data)
+            db.session.add(current_user)
+            db.session.commit()
+            flash("Your changes have been saved")
+            return render_template(url_for('routes.index'))
     return render_template('f_edit_profile.html', title='Edit Profile', form=eform)
 
 @bp_routes.route('/s_edit_profile', methods=['GET','POST'])
 def s_edit_profile():
     sform = StudentEditForm()
-    # if request.method=='POST':
-    #     if sform.validate_on_submit():
-    #         current_user.phone_num = sform.phone_num.data
-    #         current_user.set_password(sform.password.data) 
-    #         current_user.major = sform.major.data
-    #         current_user.gpa = sform.gpa.data
-    #         current_user.grad_date = sform.grad_date.data
-    #         current_user.tech_electives = sform.tech_electives.data
-    #         current_user.languages = sform.languages.data
-    #         current_user.prior_exp = sform.prior_exp.data
-    #         db.session.add(current_user)
-    #         db.session.commit()
-    #         flash("Your changes have been saved")
-    #         return render_template(url_for('routes.index'))
-    # elif (request.method == "GET"):
-    #     # Populate DB with User data
-    #     sform.phone_num.data = current_user.phone_num
-    #     sform.major.data = current_user.major
-    #     sform.gpa.data = current_user.gpa
-    #     sform.grad_date.data = current_user.grad_date
-    #     sform.tech_electives.data = current_user.tech_electives
-    #     sform.languages.data = current_user.languages
-    #     sform.prior_exp.data = current_user.prior_exp
-    #     sform.interest.data = current_user.interest
-    # else:
-    #     pass 
+    if request.method=='POST':
+        if sform.validate_on_submit():
+            current_user.phone_num = sform.phone_num.data
+            current_user.set_password(sform.password.data) 
+            current_user.major = sform.major.data
+            current_user.gpa = sform.gpa.data
+            current_user.grad_date = sform.grad_date.data
+            current_user.tech_electives = sform.tech_electives.data
+            current_user.languages = sform.languages.data
+            current_user.prior_exp = sform.prior_exp.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash("Your changes have been saved")
+            return render_template(url_for('routes.index'))
+    elif (request.method == "GET"):
+        # Populate DB with User data
+        sform.phone_num.data = current_user.phone_num
+        sform.major.data = current_user.major
+        sform.gpa.data = current_user.gpa
+        sform.grad_date.data = current_user.grad_date
+        sform.tech_electives.data = current_user.tech_electives
+        sform.languages.data = current_user.languages
+        sform.prior_exp.data = current_user.prior_exp
+        sform.interest.data = current_user.interest
+    else:
+        pass 
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
 
 @bp_routes.route('/createpost', methods=['GET','POST'])
-#@login_required
+@login_required
 def createpost():
     ppost = PostForm()
     if ppost.validate_on_submit(): 
-        newPost = Post(title = ppost.title.data,endDate = ppost.end_date.data, description = ppost.description.data, startDate = ppost.start_date.data,commitment = ppost.commitment.data, interests = ppost.interest.data)#,faculty_id = current_user.id)
+        newPost = Post(title = ppost.title.data,endDate = ppost.end_date.data, description = ppost.description.data, startDate = ppost.start_date.data,commitment = ppost.commitment.data, interests = ppost.interest.data,faculty_id = current_user.id)
         for i in newPost.interests:
             newPost.interests.append(i)
         db.session.add(newPost)

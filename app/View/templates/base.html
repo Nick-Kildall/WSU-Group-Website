@@ -18,8 +18,8 @@
                 <td><a href="{{ url_for('routes.createpost') }}" class = "button"> Create Open Position </a></td>
                 <td><a href="{{ url_for('routes.f_edit_profile') }}" class = "button"> Faculty Edit Profile </a></td>
                 <td><a href="{{ url_for('routes.s_edit_profile') }}" class = "button"> Student Edit Profile </a></td>
-                <td><a href="" class = "button"> Logout </a></td>
-                <td> Current user is: <span class="useritem">________ </span> </td>  
+                <td><a href="{{ url_for('auth.logout') }}" class = "button"> Logout </a></td>
+                <td> Current user is: <span class="useritem"> {{current_user.username}} </span> </td>  
             </tr>
         </table>
         </div>

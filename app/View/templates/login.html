@@ -28,7 +28,7 @@
 
             <p>{{ form.submit(class = 'button') }}</p>
             
-            <p> New Student User?<a href = "">Click to Register! </a>  </p>
+            <p> New Student User?<a href = "{{url_for('auth.student_registration')}}">Click to Register! </a>  </p>
             <p> New Faculty User?<a href = "{{url_for('auth.f_register')}}">Click to Register! </a>  </p>
         </form>
     {%endif%}
