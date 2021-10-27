@@ -43,6 +43,7 @@ class SortForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
+    qualifications = StringField('Qualifications', validators=[DataRequired()])
     start_date = StringField('Start Date',  validators=[DataRequired()])
     end_date = StringField('End Date',  validators=[DataRequired()])
     interest = QuerySelectMultipleField( 'Interest',

@@ -30,6 +30,7 @@ class Post(db.Model):
     description = db.Column(db.String(2500))
     faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
     commitment = db.Column(db.Integer)
+    qualifications = db.Column(db.String(2500))
     # postInterests
     interests = db.relationship('Interest',
         secondary = postInterests,
