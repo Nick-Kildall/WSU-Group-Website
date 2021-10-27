@@ -29,6 +29,7 @@ def get_posts(selection):
 
 @bp_routes.route('/', methods=['GET', 'POST'])
 @bp_routes.route('/index', methods=['GET', 'POST'])
+@login_required
 def index():
     interest_list = []
 
@@ -73,6 +74,7 @@ def view_profile(userid):
     pass
 
 @bp_routes.route('/<userid>/edit_profile', methods=['GET', 'POST'])
+@login_required
 def edit_profile(userid):
     if current_user.account_type == 0:  # faculty edit pages
         eform=FacultyEditForm()
@@ -117,6 +119,7 @@ def edit_profile(userid):
     return
 
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
+@login_required
 def f_edit_profile():
     eform=FacultyEditForm()
     if request.method=='POST':
@@ -127,9 +130,14 @@ def f_edit_profile():
             db.session.commit()
             flash("Your changes have been saved")
             return render_template(url_for('routes.index'))
+        elif (request.method == "GET"):
+            eform.phone_num.data=current_user.phone_num
+        else:
+            pass
     return render_template('f_edit_profile.html', title='Edit Profile', form=eform)
 
 @bp_routes.route('/s_edit_profile', methods=['GET','POST'])
+@login_required
 def s_edit_profile():
     sform = StudentEditForm()
     if request.method=='POST':
@@ -165,7 +173,7 @@ def s_edit_profile():
 def createpost():
     ppost = PostForm()
     if ppost.validate_on_submit(): 
-        newPost = Post(title = ppost.title.data,endDate = ppost.end_date.data, description = ppost.description.data, startDate = ppost.start_date.data,commitment = ppost.commitment.data, interests = ppost.interest.data,faculty_id = current_user.id)
+        newPost = Post(title = ppost.title.data,endDate = ppost.end_date.data, description = ppost.description.data,qualifications=ppost.qualifications.data, startDate = ppost.start_date.data,commitment = ppost.commitment.data, interests = ppost.interest.data,faculty_id = current_user.id)
         for i in newPost.interests:
             newPost.interests.append(i)
         db.session.add(newPost)

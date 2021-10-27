@@ -17,7 +17,7 @@ def f_register():
     #     return redirect(url_for('routes.index'))
     rform=FacultyRegForm()
     if rform.validate_on_submit():
-        faculty=Faculty(username=rform.username.data, email=rform.email.data, firstname=rform.firstname.data,
+        faculty=Faculty(username=rform.username.data, firstname=rform.firstname.data,
                         lastname=rform.lastname.data,phone_num=rform.phone_num.data,wsu_id=rform.wsu_id.data)
         faculty.set_password(rform.password.data)
         db.session.add(faculty)
@@ -66,6 +66,7 @@ def login():
     return render_template('login.html', title = 'Sign In', form=lform)
 
 @bp_auth.route('/logout', methods = ['GET'])
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))

@@ -15,17 +15,17 @@ class FacultyRegForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
     username=StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+   # email = StringField('Email', validators=[DataRequired(), Email()])
     phone_num = StringField('Phone Number',  validators=[DataRequired()])
     wsu_id = StringField('WSU ID', validators=[DataRequired()])
     password = PasswordField('Password',validators=[DataRequired()])
     password2 = PasswordField('Repeat Password',validators=[DataRequired(),EqualTo('password')])
     submit = SubmitField('Submit')
 
-    def validate_email(self, email):
-        faculty=Faculty.query.filter_by(email=email.data).first()
-        if faculty is not None:
-            raise ValidationError('The email already exists! Please use a different email address.')
+    # def validate_email(self, email):
+    #     faculty=Faculty.query.filter_by(email=email.data).first()
+    #     if faculty is not None:
+    #         raise ValidationError('The email already exists! Please use a different email address.')
 
     def validate_username(self, username):
         faculty=Faculty.query.filter_by(username=username.data).first()
