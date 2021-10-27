@@ -70,7 +70,7 @@ def index():
 
 @bp_routes.route('/<userid>', methods = ['GET', 'POST'])
 def view_profile(userid):
-    return
+    pass
 
 @bp_routes.route('/<userid>/edit_profile', methods=['GET', 'POST'])
 def edit_profile(userid):

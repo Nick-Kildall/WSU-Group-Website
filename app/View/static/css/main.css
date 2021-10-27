@@ -36,7 +36,7 @@ a:hover {
     margin: 0px;
 }
 
-.postbox {
+/* .postbox {
     display: flex;
     vertical-align: middle;
     background-color: lightgoldenrodyellow;
@@ -48,6 +48,45 @@ a:hover {
     width: 80%;
     padding: 10px;
     margin: 4px;
+} */
+.postlist{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+
+@media screen and (min-width: 1200px){
+    .post-box{
+        display: flex;
+        vertical-align: middle;
+        background: rgb(216, 227, 235);
+        width: 32%;
+        margin: 5px;
+        padding: 2px;
+    }
+}
+
+@media screen and (min-width: 800px) and (max-width: 1200px){
+    .post-box{
+        display: flex;
+        vertical-align: middle;
+        background: rgb(216, 227, 235);
+        width: 48%;
+        margin: 5px;
+        padding: 2px;
+    }
+}
+
+@media screen and (max-width: 800px){
+    .post-box{
+        display: flex;
+        vertical-align: middle;
+        background: rgb(216, 227, 235);
+        width: 99%;
+        margin: 5px;
+        padding: 2px;
+    }
 }
 
 .posttitle {
