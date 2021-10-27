@@ -9,6 +9,8 @@ from app.Model.models import Faculty, Interest
 
 def get_interests():
     return Interest.query.all()
+
+    #test comment
  
 def get_interestLabel(interest):
     return interest.name
