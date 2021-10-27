@@ -24,6 +24,7 @@ a:hover {
     padding : 5px;
     border: 1px solid lightgray;
 }
+
 .button:hover {
     background-color: 157dd3;
     color: white;
@@ -33,6 +34,20 @@ a:hover {
 .posttable { 
     width : 100%;
     margin: 0px;
+}
+
+.postbox {
+    display: flex;
+    vertical-align: middle;
+    background-color: lightgoldenrodyellow;
+}
+
+.postlist {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    padding: 10px;
+    margin: 4px;
 }
 
 .posttitle {
