@@ -7,7 +7,7 @@ from config import Config
 from flask_login import login_user, logout_user, current_user, login_required
 from app import db
 from app.Controller.auth_forms import FacultyRegForm, StudentRegForm, LoginForm 
-from app.Model.models import Faculty, Student
+from app.Model.models import Faculty, Student, User
 bp_auth = Blueprint('auth', __name__)
 bp_auth.template_folder = Config.TEMPLATE_FOLDER 
 
@@ -17,10 +17,14 @@ def f_register():
     #     return redirect(url_for('routes.index'))
     rform=FacultyRegForm()
     if rform.validate_on_submit():
-        faculty=Faculty(username=rform.username.data, email=rform.email.data, firstname=rform.firstname.data,
-        lastname=rform.lastname.data,phone_num=rform.phone_num.data,wsu_id=rform.wsu_id.data)
-        faculty.set_password(rform.password.data)
-        db.session.add(faculty)
+        newUser=User(username=rform.username.data,email=rform.email.data, firstname=rform.firstname.data, lastname=rform.lastname.data, phone_num=rform.phone_num.data,
+        wsu_id=rform.wsu_id.data)
+       # newFaculty=Faculty(newUser)
+        
+        # faculty=Faculty(username=rform.username.data, email=rform.email.data, firstname=rform.firstname.data,
+        # lastname=rform.lastname.data,phone_num=rform.phone_num.data,wsu_id=rform.wsu_id.data)
+        newUser.set_password(rform.password.data)
+        db.session.add(newUser)
         db.session.commit()
         flash('Congratulations, you are now a registered faculty member!')
         return redirect(url_for('routes.index'))
@@ -31,20 +35,20 @@ def student_registration():
     # if current_user.is_authenticated:
     #     return redirect(url_for('routes.index'))
     srform = StudentRegForm()
-    if srform.validate_on_submit():
-        newStudent = Student(username = srform.username.data, 
-        phone_num = srform.phone_num.data, first_name = srform.first_name.data,
-        last_name = srform.last_name.data, wsu_id = srform.wsu_id.data,
-        major = srform.major.data, gpa = srform.gpa.data,
-        grad_date = srform.grad_date.data, tech_electives = srform.tech_electives.data,
-        languages = srform.languages.data, prior_exp = srform.prior_exp.data)
-        newStudent.set_password(srform.password.data) 
-        for tempInterest in srform.interest.data:
-            newStudent.interests.append(tempInterest)
-        db.session.add(newStudent)
-        db.session.commit()
-        flash("Congratulations, you are now a registered student!")
-        return render_template(url_for('routes.index'))
+    # if srform.validate_on_submit():
+    #     newStudent = Student(username = srform.username.data, 
+    #     phone_num = srform.phone_num.data, first_name = srform.first_name.data,
+    #     last_name = srform.last_name.data, wsu_id = srform.wsu_id.data,
+    #     major = srform.major.data, gpa = srform.gpa.data,
+    #     grad_date = srform.grad_date.data, tech_electives = srform.tech_electives.data,
+    #     languages = srform.languages.data, prior_exp = srform.prior_exp.data)
+    #     newStudent.set_password(srform.password.data) 
+    #     for tempInterest in srform.interest.data:
+    #         newStudent.interests.append(tempInterest)
+    #     db.session.add(newStudent)
+    #     db.session.commit()
+    #     flash("Congratulations, you are now a registered student!")
+    #     return render_template(url_for('routes.index'))
     return render_template('student_registration.html', title='Student Registration', form=srform)
 
 
@@ -56,7 +60,7 @@ def login():
     lform = LoginForm()
     if lform.validate_on_submit():
         user = User.query.filter_by(username = lform.username.data).first()
-        if(user is None) or (user.check_password(lform.password.data) == False):
+        if(user is None) or (user.get_password(lform.password.data) == False):
             flash('Invalid username or password')
             return redirect(url_for('auth.login'))
         login_user(user, remember = lform.remember_me.data)

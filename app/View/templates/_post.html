@@ -1,12 +1,57 @@
-<table class = 'table table-hover'>
+<!-- <table class = 'table table-hover'>
     <tr align = 'center'>
         <td width = '60%'>{{ post.name }}</td>
         <td width = '20%'>
-            <!--
-            <form action = "{{ url_for('routes.apply', postid = post.id)}}">
+            
+            <form action = "{{ url_for('routes.apply', postid = post.id) }}">
                 <input type = 'apply', value = 'Apply', class = 'button'>
             </form>
-            -->
+            
         </td>
     </tr>
+</table> -->
+
+
+
+
+<table class = "posttable" style = "width:100%" valign="top">
+
+    <td width = "100%">
+    <tr> 
+        <td colspan="3"><div class="posttitle"> {{post.title}} </div>
+        </td>
+    </tr>
+    <tr> 
+        <td colspan="3"><div class="posttitle"> Goal Objective:  </div>
+        </td>
+
+    </tr>
+    <tr> 
+        <td colspan="3"><div class="posttitle">  {{post.description}} </div>
+        </td>
+
+    </tr>
+   
+    <tr> 
+        <td colspan="3"><div class="posttitle"> Date: {{post.startDate}} - {{post.endDate}} </div>
+        </td>
+    </tr>
+    <tr> 
+        <td colspan="3"><div class="posttitle">  Time Commitment: {{post.commitment}} </div>
+        </td>
+
+    </tr>
+    <tr> 
+        <td colspan="3"><div class="posttitle"> Qualifications:  </div>
+        </td>
+
+    </tr>
+    <tr> 
+        <td colspan="3"><div class="posttitle">  test </div>
+        </td>
+
+    </tr>
+    
+</td>
+
 </table>

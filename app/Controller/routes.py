@@ -50,21 +50,27 @@ def index():
     sort_form = SortForm()
     # pass current user's interests to sortform
     sort_form.sort_by.choices = interest_list
-
-    if request.method == 'POST':
-        if sort_form.validate_on_submit():
-            # pull list of posts
+    if sort_form.validate_on_submit():
             posts = get_posts(sort_form.sort_by.data)
             form = SortForm()
-            return render_template('index.html', posts = posts, form=sort_form)
-    if request.method == 'GET':
+    else:
         posts = Post.query.order_by(Post.id.desc())
-        return render_template('index.html', posts = posts, form=sort_form)
+    return render_template('index.html', posts = posts, form=sort_form)
+
+    # if request.method == 'POST':
+    #     if sort_form.validate_on_submit():
+    #         # pull list of posts
+    #         posts = get_posts(sort_form.sort_by.data)
+    #         form = SortForm()
+    #         return render_template('index.html', posts = posts, form=sort_form)
+    # if request.method == 'GET':
+    #     posts = Post.query.order_by(Post.id.desc())
+    #     return render_template('index.html', posts = posts, form=sort_form)
 
 
 @bp_routes.route('/<userid>', methods = ['GET', 'POST'])
 def view_profile(userid):
-    return
+    pass
 
 @bp_routes.route('/<userid>/edit_profile', methods=['GET', 'POST'])
 def edit_profile(userid):
