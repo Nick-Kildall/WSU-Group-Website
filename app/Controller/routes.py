@@ -3,9 +3,9 @@ import sys
 from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import  current_user, login_required
-from app.Controller.forms import FacultyEditForm, StudentEditForm
+from app.Controller.forms import FacultyEditForm, StudentEditForm, SortForm
 from config import Config
-from app.Model.models import Faculty, Student
+from app.Model.models import Faculty, Student, Post, User
 
 from app import db
 
@@ -13,15 +13,58 @@ bp_routes = Blueprint('routes', __name__)
 bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
 
 
-@bp_routes.route('/', methods=['GET'])
-@bp_routes.route('/index', methods=['GET'])
+def get_posts(selection):
+    if selection == 'Recommended':
+        available_interests = current_user.interests.query.all()
+        for interest in available_interests:
+            posts = []
+            posts.append(Post.query.filter_by(interest).first())
+        return posts
+    elif selection == 'View All':
+        return Post.query.order_by(Post.id.desc())
+    else:
+        print(selection)
+        return Post.query.filter(Post.interests.any(name = selection)).all()
+        #Post.query.filter_by(interests = selection).desc()
+
+
+@bp_routes.route('/', methods=['GET', 'POST'])
+@bp_routes.route('/index', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    interest_list = []
+
+    if (current_user.is_authenticated):
+        # pull current user's interests
+        available_interests = current_user.interests.query.all()
+        interest_list = [(i.id, i.name) for i in available_interests]
+        interest_list.append([len(available_interests), 'Recommended'])
+        interest_list.append([len(available_interests)+1, 'View All'])
+    else:
+        j = 0
+        interest_list.append([1, 'Machine Learning'])
+        interest_list.append([2, 'Full Stack'])
+        interest_list.append([3, 'Financial Modeling'])
+        interest_list.append([4, 'Recommended'])
+        interest_list.append([5, 'View All'])
+
+    # create sortform
+    sort_form = SortForm()
+    # pass current user's interests to sortform
+    sort_form.sort_by.choices = interest_list
+
+    if request.method == 'POST':
+        if sort_form.validate_on_submit():
+            # pull list of posts
+            posts = get_posts(sort_form.sort_by.data)
+            form = SortForm()
+            return render_template('index.html', posts = posts, form=sort_form)
+    if request.method == 'GET':
+        posts = Post.query.order_by(Post.id.desc())
+        return render_template('index.html', posts = posts, form=sort_form)
 
 
 @bp_routes.route('/<userid>', methods = ['GET', 'POST'])
 def view_profile(userid):
-
     return
 
 @bp_routes.route('/<userid>/edit_profile', methods=['GET', 'POST'])

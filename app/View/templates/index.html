@@ -9,14 +9,31 @@
 {% block content %}
 
     <h1>Welcome to Research Connect!</h1>
+    <br>
+    <h2>Hello, {{ current_user.firstname }} {{ current_user.lastname }}</h2>
 
-    <br>Hello, {{ current_user.firstname }} {{ current_user.lastname }}
+    {% if form %}
+    <form action = "http://localhost:5000/index" method = "POST" style = "padding-left:16px;" class = 'formselect'>
+        {{ form.hidden_tag() }}
+        {{ form.sort_by.label}}
+        <br>
+        <div class = 'formselect'>
+            {{ form.sort_by() }}<br>
+        </div>
+        <div>
+            {{ form.submit(class = 'button') }}
+        </div>
+    {% endif %}
 
+    
+    </form>
+    <div class = 'postlist'>
     {% for post in posts %}
-        {% for interest in post.interests %}
-            {% if interest in current_user.interests %}
-                {% include '_post.html' %} 
-            {% endif %}
-        {% endfor %}
+        <div class = 'postbox'>
+            {% include '_post.html' %}
+        </div>
     {% endfor %}
+    </div>
+    
+
 {% endblock %}
