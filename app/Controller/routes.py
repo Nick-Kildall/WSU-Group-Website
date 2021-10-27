@@ -3,9 +3,9 @@ import sys
 from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import  current_user, login_required
-from app.Controller.forms import FacultyEditForm, StudentEditForm, SortForm
-from config import Config
 from app.Model.models import Faculty, Student, Post, User
+from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm
+from config import Config
 
 from app import db
 
@@ -154,6 +154,20 @@ def s_edit_profile():
     # else:
     #     pass 
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
+
+@bp_routes.route('/createpost', methods=['GET','POST'])
+#@login_required
+def createpost():
+    ppost = PostForm()
+    if ppost.validate_on_submit(): 
+        newPost = Post(title = ppost.title.data,endDate = ppost.end_date.data, description = ppost.description.data, startDate = ppost.start_date.data,commitment = ppost.commitment.data, interests = ppost.interest.data)#,faculty_id = current_user.id)
+        for i in newPost.interests:
+            newPost.interests.append(i)
+        db.session.add(newPost)
+        db.session.commit()
+        flash("Your post has been created.")
+        return redirect(url_for('routes.index'))
+    return render_template('createpost.html', title='Create Post', form=ppost)
 
 
 @bp_routes.route('/apply', methods=['GET','POST'])

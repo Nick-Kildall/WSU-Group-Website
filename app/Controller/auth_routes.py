@@ -6,7 +6,7 @@ from flask_sqlalchemy import sqlalchemy
 from config import Config
 from flask_login import login_user, logout_user, current_user, login_required
 from app import db
-from app.Controller.auth_forms import FacultyRegForm, StudentRegForm
+from app.Controller.auth_forms import FacultyRegForm, StudentRegForm, LoginForm 
 from app.Model.models import Faculty, Student
 bp_auth = Blueprint('auth', __name__)
 bp_auth.template_folder = Config.TEMPLATE_FOLDER 
@@ -46,3 +46,19 @@ def student_registration():
         flash("Congratulations, you are now a registered student!")
         return render_template(url_for('routes.index'))
     return render_template('student_registration.html', title='Student Registration', form=srform)
+
+
+
+@bp_auth.route('/login', methods =['GET','POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('routes.index'))
+    lform = LoginForm()
+    if lform.validate_on_submit():
+        user = User.query.filter_by(username = lform.username.data).first()
+        if(user is None) or (user.check_password(lform.password.data) == False):
+            flash('Invalid username or password')
+            return redirect(url_for('auth.login'))
+        login_user(user, remember = lform.remember_me.data)
+        return redirect(url_for('routes.index'))
+    return render_template('login.html', title = 'Sign In', form=lform)
