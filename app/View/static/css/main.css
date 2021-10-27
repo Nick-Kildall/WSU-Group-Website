@@ -24,6 +24,7 @@ a:hover {
     padding : 5px;
     border: 1px solid lightgray;
 }
+
 .button:hover {
     background-color: 157dd3;
     color: white;
@@ -33,6 +34,47 @@ a:hover {
 .posttable { 
     width : 100%;
     margin: 0px;
+    table-layout: auto;
+}
+
+.postlist{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+
+@media screen and (min-width: 1200px){
+    .post-box{
+        display: flex;
+        vertical-align: middle;
+        background: rgb(216, 227, 235);
+        width: 32%;
+        margin: 5px;
+        padding: 2px;
+    }
+}
+
+@media screen and (min-width: 800px) and (max-width: 1200px){
+    .post-box{
+        display: flex;
+        vertical-align: middle;
+        background: rgb(216, 227, 235);
+        width: 48%;
+        margin: 5px;
+        padding: 2px;
+    }
+}
+
+@media screen and (max-width: 800px){
+    .post-box{
+        display: flex;
+        vertical-align: middle;
+        background: rgb(216, 227, 235);
+        width: 99%;
+        margin: 5px;
+        padding: 2px;
+    }
 }
 
 .posttitle {
@@ -46,4 +88,28 @@ a:hover {
     margin: 4px 3px 4px 3px;
     color: crimson; 
     text-transform: uppercase;
+}
+
+.forminput {
+    margin: 5px;
+    padding: 5px;
+    font: Tahoma;
+    font-size: medium;
+    width: 50%;
+}
+.formbody{
+    padding: 2px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    width: 60%;
+    height: 80px;
+    margin: 5px;
+}
+
+.postmessage {
+    font-family: Tahoma;
+    font-size: 16px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    overflow-wrap: normal;
 }
