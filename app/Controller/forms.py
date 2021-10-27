@@ -35,12 +35,10 @@ class StudentEditForm(FlaskForm):
         widget=ListWidget(prefix_label=False),
         option_widget=CheckboxInput() )
     submit = SubmitField('Submit')
-    
-    
+
 class SortForm(FlaskForm):
     sort_by = SelectField('Filter By', coerce=int, validators=[InputRequired()])
     submit = SubmitField('Apply')
-
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])

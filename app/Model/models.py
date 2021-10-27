@@ -103,7 +103,6 @@ class Faculty(User, db.Model):
     pass
 
 
-
 '''
 Sample class inheritence structure as follows
 drouhana
