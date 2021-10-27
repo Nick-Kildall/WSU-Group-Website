@@ -9,8 +9,6 @@ from app.Model.models import Faculty, Interest
 
 def get_interests():
     return Interest.query.all()
-
-    #test comment
  
 def get_interestLabel(interest):
     return interest.name
@@ -38,10 +36,10 @@ class StudentEditForm(FlaskForm):
         option_widget=CheckboxInput() )
     submit = SubmitField('Submit')
 
-
 class SortForm(FlaskForm):
     sort_by = SelectField('Filter By', coerce=int, validators=[InputRequired()])
     submit = SubmitField('Apply')
+
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
