@@ -7,7 +7,7 @@ from app import login
 
 @login.user_loader  
 def load_user(id):
-    return Faculty.query.get(int(id))
+    return User.query.get(int(id))
 
 
 userInterests = db.Table('userInterests',
@@ -20,7 +20,6 @@ postInterests = db.Table('postInterests',
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'))
 )
 
-
 # this is the beginning for the post model. i have added the details i need for
 # the _post.html and index.html page
 class Post(db.Model):
@@ -31,24 +30,34 @@ class Post(db.Model):
     description = db.Column(db.String(2500))
     faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
     commitment = db.Column(db.Integer)
-    interests = db.relationship('Interest', secondary = postInterests, primaryjoin=(postInterests.c.post_id == id),  backref=db.backref('postInterests', lazy='dynamic') ,lazy='dynamic')
+    # postInterests
+    interests = db.relationship('Interest',
+        secondary = postInterests,
+        primaryjoin=(postInterests.c.post_id == id), 
+        backref=db.backref('postInterests', lazy='dynamic'), 
+        lazy='dynamic')
+
     def get_interests(self):
         return self.interests
+
 
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
-    posts = db.relationship('Post', 
+    # postInterests
+    posts = db.relationship("Post",
         secondary = postInterests,
         primaryjoin=(postInterests.c.interest_id == id),
         backref=db.backref('postInterests',
-        lazy='dynamic'), lazy='dynamic')
-    users = db.relationship('User', 
+        lazy='dynamic'),
+        lazy='dynamic')
+    # userInterests
+    users = db.relationship('User',
         secondary = userInterests,
         primaryjoin=(userInterests.c.interest_id == id),
         backref=db.backref('userInterests',
-        lazy='dynamic'), lazy='dynamic')
-        
+        lazy='dynamic'),
+        lazy='dynamic')
 
     def __repr__(self):
         return '<ID: {} Name: {}>'.format(self.id,self.name)
@@ -63,11 +72,13 @@ class User(UserMixin, db.Model):
     lastname = db.Column(db.String(64))
     phone_num=db.Column(db.String(15))
     wsu_id=db.Column(db.String(10),unique=True,index=True)
-    interests = db.relationship("Interest", 
+    # userInterests
+    interests = db.relationship("Interest",
         secondary = userInterests,
         primaryjoin=(userInterests.c.user_id == id),
         backref=db.backref('userInterests',
-        lazy='dynamic'), lazy='dynamic')
+        lazy='dynamic'),
+        lazy='dynamic')
 
     def __repr__(self):
         return '<ID: {} Username: {}>'.format(self.id,self.username)

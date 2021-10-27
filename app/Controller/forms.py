@@ -1,9 +1,13 @@
 from flask_wtf import FlaskForm
+<<<<<<< HEAD
+from wtforms import StringField, SubmitField, TextAreaField, PasswordField, SelectField
+=======
 from wtforms import StringField, SubmitField, TextAreaField, PasswordField
 from wtforms.fields.core import IntegerField
+>>>>>>> iteration_one
 from wtforms.widgets.core import CheckboxInput, ListWidget
 from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
-from wtforms.validators import  ValidationError, Length, DataRequired, Email, EqualTo
+from wtforms.validators import  ValidationError, Length, DataRequired, Email, EqualTo, InputRequired
 from flask_login import current_user
 from app.Model.models import Faculty, Interest
 
@@ -36,6 +40,12 @@ class StudentEditForm(FlaskForm):
         option_widget=CheckboxInput() )
     submit = SubmitField('Submit')
 
+<<<<<<< HEAD
+
+class SortForm(FlaskForm):
+    sort_by = SelectField('Filter By', coerce=int, validators=[InputRequired()])
+    submit = SubmitField('Apply')
+=======
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
@@ -51,3 +61,4 @@ class PostForm(FlaskForm):
 
 
 
+>>>>>>> iteration_one
