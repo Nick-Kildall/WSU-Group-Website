@@ -3,7 +3,7 @@ from wtforms import StringField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import  ValidationError, DataRequired, EqualTo, Length,Email
 from wtforms.widgets.core import CheckboxInput, ListWidget
 from wtforms_sqlalchemy.fields import QuerySelectMultipleField
-from app.Model.models import Faculty, Interest, Student
+from app.Model.models import Faculty, Interest
 
 def get_interests():
     return Interest.query.all()
@@ -38,7 +38,7 @@ class FacultyRegForm(FlaskForm):
                 raise ValidationError('The WSU ID already exists!.')
 
 class StudentRegForm(FlaskForm):
-    username = StringField('Username - Enter your WSU Email',  validators=[DataRequired(), Email()])
+    username = StringField('Username - Enter your WSU Email',  validators=[DataRequired()])
     password = PasswordField('Password',validators=[DataRequired()])
     password2 = PasswordField('Repeat Password',validators=[DataRequired(), EqualTo('password')])
     phone_num = StringField('Phone Number',  validators=[DataRequired()])
@@ -57,21 +57,6 @@ class StudentRegForm(FlaskForm):
         widget=ListWidget(prefix_label=False),
         option_widget=CheckboxInput() )
     submit = SubmitField('Submit')
-    
-    def validate_email(self, email):
-        student=Student.query.filter_by(email=email.data).first()
-        if student is not None:
-            raise ValidationError('The email already exists! Please use a different email address.')
-
-    def validate_username(self, username):
-        student=Student.query.filter_by(username=username.data).first()
-        if student is not None:
-                raise ValidationError('The username already exists! Please use a different username.')
-
-    def validate_wsuId(self, wsu_id):
-        student=Student.query.filter_by(wsu_id=wsu_id.data).first()
-        if student is not None:
-                raise ValidationError('The WSU ID already exists!.')
 
 
 class LoginForm(FlaskForm):
