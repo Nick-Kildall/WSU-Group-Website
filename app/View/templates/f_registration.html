@@ -29,12 +29,7 @@
                 <span style="color:red;">[{{error}}]</span>
                 {% endfor %}
 
-                <p>{{form.email.label}}</p>
-                <p>{{form.email(class='forminput')}}</p>
-
-                {%for error in form.email.errors%}
-                <span style="color:red;">[{{error}}]</span>
-                {% endfor %}
+                
 
                 <p>{{form.phone_num.label}}</p>
                 <p>{{form.phone_num(class='forminput')}}</p>
