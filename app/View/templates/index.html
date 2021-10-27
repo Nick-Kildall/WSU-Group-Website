@@ -9,18 +9,19 @@
 {% block content %}
 
     <h1>Welcome to Research Connect!</h1>
+    <br>
     <h2>Hello, {{ current_user.firstname }} {{ current_user.lastname }}</h2>
 
     {% if form %}
     <form action = "http://localhost:5000/index" method = "POST" style = "padding-left:16px;" class = 'formselect'>
         {{ form.hidden_tag() }}
+        {{ form.sort_by.label}}
+        <br>
         <div class = 'formselect'>
-            {{ form.sort_by.label}}
-            {{ form.sort_by() }}
-            {{ form.submit(class = 'button') }}
+            {{ form.sort_by() }}<br>
         </div>
         <div>
-            
+            {{ form.submit(class = 'button') }}
         </div>
     {% endif %}
 
