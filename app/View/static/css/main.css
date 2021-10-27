@@ -97,6 +97,14 @@ a:hover {
     font-size: medium;
     width: 50%;
 }
+.formbody{
+    padding: 2px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    width: 60%;
+    height: 80px;
+    margin: 5px;
+}
 
 .postmessage {
     font-family: Tahoma;
