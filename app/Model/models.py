@@ -92,6 +92,7 @@ class User(UserMixin, db.Model):
 
 
 class Student(User, db.Model):
+    __tablename__ = 'student'
     major = db.Column(db.String(64))
     gpa = db.Column(db.String(5))
     grad_date = db.Column(db.String(64))
