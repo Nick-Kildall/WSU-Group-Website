@@ -3,6 +3,7 @@ import sys
 from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import  current_user, login_required
+from flask_wtf.recaptcha.widgets import RecaptchaWidget
 from app.Model.models import Faculty, Student, Post, User
 from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm
 from config import Config
@@ -129,7 +130,7 @@ def f_edit_profile():
             db.session.add(current_user)
             db.session.commit()
             flash("Your changes have been saved")
-            return render_template(url_for('routes.index'))
+            return redirect(url_for('routes.index'))
         elif (request.method == "GET"):
             eform.phone_num.data=current_user.phone_num
         else:
@@ -153,7 +154,7 @@ def s_edit_profile():
             db.session.add(current_user)
             db.session.commit()
             flash("Your changes have been saved")
-            return render_template(url_for('routes.index'))
+            return redirect(url_for('routes.index'))
     elif (request.method == "GET"):
         # Populate DB with User data
         sform.phone_num.data = current_user.phone_num

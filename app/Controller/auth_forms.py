@@ -14,8 +14,7 @@ def get_interestLabel(interest):
 class FacultyRegForm(FlaskForm):
     firstname = StringField('First Name', validators=[DataRequired()])
     lastname = StringField('Last Name', validators=[DataRequired()])
-    username=StringField('Username', validators=[DataRequired()])
-   # email = StringField('Email', validators=[DataRequired(), Email()])
+    username=StringField('Username — Enter WSU', validators=[DataRequired(), Email()])
     phone_num = StringField('Phone Number',  validators=[DataRequired()])
     wsu_id = StringField('WSU ID', validators=[DataRequired()])
     password = PasswordField('Password',validators=[DataRequired()])
@@ -38,12 +37,12 @@ class FacultyRegForm(FlaskForm):
                 raise ValidationError('The WSU ID already exists!.')
 
 class StudentRegForm(FlaskForm):
-    username = StringField('Username - Enter your WSU Email',  validators=[DataRequired()])
+    username = StringField('Username - Enter your WSU Email',  validators=[DataRequired(), Email()])
     password = PasswordField('Password',validators=[DataRequired()])
     password2 = PasswordField('Repeat Password',validators=[DataRequired(), EqualTo('password')])
     phone_num = StringField('Phone Number',  validators=[DataRequired()])
-    first_name = StringField('First Name',  validators=[DataRequired()])
-    last_name = StringField('Last Name',  validators=[DataRequired()])
+    firstname = StringField('First Name',  validators=[DataRequired()])
+    lastname = StringField('Last Name',  validators=[DataRequired()])
     wsu_id = StringField('WSU ID',  validators=[DataRequired()])
     major = StringField('Major',  validators=[DataRequired()])
     gpa = StringField('GPA',  validators=[DataRequired()])
@@ -58,6 +57,7 @@ class StudentRegForm(FlaskForm):
         option_widget=CheckboxInput() )
     submit = SubmitField('Submit')
 
+ 
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
