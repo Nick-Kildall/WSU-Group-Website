@@ -72,7 +72,7 @@ class User(UserMixin, db.Model):
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
     phone_num=db.Column(db.String(15))
-    wsu_id=db.Column(db.String(10),unique=True,index=True)
+    wsu_id=db.Column(db.String(10),index=True)
     # userInterests
     interests = db.relationship("Interest",
         secondary = userInterests,
@@ -80,6 +80,13 @@ class User(UserMixin, db.Model):
         backref=db.backref('userInterests',
         lazy='dynamic'),
         lazy='dynamic')
+    major = db.Column(db.String(64), default = "")
+    gpa = db.Column(db.String(5),default = "")
+    grad_date = db.Column(db.String(64),default = "")
+    tech_electives = db.Column(db.String(1000),default = "")
+    languages = db.Column(db.String(1000),default = "")
+    prior_exp = db.Column(db.String(10000),default = "")
+    #temp
 
     def __repr__(self):
         return '<ID: {} Username: {}>'.format(self.id,self.username)
@@ -92,13 +99,13 @@ class User(UserMixin, db.Model):
 
 
 class Student(User, db.Model):
-    __tablename__ = 'student'
-    major = db.Column(db.String(64))
-    gpa = db.Column(db.String(5))
-    grad_date = db.Column(db.String(64))
-    tech_electives = db.Column(db.String(1000))
-    languages = db.Column(db.String(1000))
-    prior_exp = db.Column(db.String(10000))
+    pass
+    # major = db.Column(db.String(64))
+    # gpa = db.Column(db.String(5))
+    # grad_date = db.Column(db.String(64))
+    # tech_electives = db.Column(db.String(1000))
+    # languages = db.Column(db.String(1000))
+    # prior_exp = db.Column(db.String(10000))
 
 
 class Faculty(User, db.Model):

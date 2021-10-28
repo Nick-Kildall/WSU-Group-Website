@@ -29,11 +29,11 @@ class StudentEditForm(FlaskForm):
     tech_electives = StringField('Technical Electives',  validators=[DataRequired()])
     languages = StringField('Languages',  validators=[DataRequired()])
     prior_exp = StringField('Prior Experience',  validators=[DataRequired()])
-    interest = QuerySelectMultipleField( 'Interest',
+    """ interest = QuerySelectMultipleField( 'Interest',
         query_factory= get_interests,
         get_label= get_interestLabel,
         widget=ListWidget(prefix_label=False),
-        option_widget=CheckboxInput() )
+        option_widget=CheckboxInput() ) """
     submit = SubmitField('Submit')
 
 class SortForm(FlaskForm):
