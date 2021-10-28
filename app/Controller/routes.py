@@ -164,7 +164,7 @@ def s_edit_profile():
         sform.tech_electives.data = current_user.tech_electives
         sform.languages.data = current_user.languages
         sform.prior_exp.data = current_user.prior_exp
-        sform.interest.data = current_user.interest
+        #sform.interest.data = current_user.interest
     else:
         pass 
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)

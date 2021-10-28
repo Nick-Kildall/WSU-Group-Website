@@ -39,8 +39,8 @@ def student_registration():
             grad_date = srform.grad_date.data, tech_electives = srform.tech_electives.data,
             languages = srform.languages.data, prior_exp = srform.prior_exp.data)
         newStudent.set_password(srform.password.data) 
-        for tempInterest in srform.interest.data:
-            newStudent.interests.append(tempInterest)
+        #for tempInterest in srform.interest.data:
+        #    newStudent.interests.append(tempInterest)
         db.session.add(newStudent)
         db.session.commit()
         flash("Congratulations, you are now a registered student!")

@@ -3,7 +3,7 @@ from wtforms import StringField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import  ValidationError, DataRequired, EqualTo, Length,Email
 from wtforms.widgets.core import CheckboxInput, ListWidget
 from wtforms_sqlalchemy.fields import QuerySelectMultipleField
-from app.Model.models import Faculty, Interest
+from app.Model.models import User, Faculty, Interest, Student
 
 def get_interests():
     return Interest.query.all()
@@ -27,12 +27,12 @@ class FacultyRegForm(FlaskForm):
     #         raise ValidationError('The email already exists! Please use a different email address.')
 
     def validate_username(self, username):
-        faculty=Faculty.query.filter_by(username=username.data).first()
+        faculty=User.query.filter_by(username=username.data).first()
         if faculty is not None:
                 raise ValidationError('The username already exists! Please use a different username.')
 
     def validate_wsuId(self, wsu_id):
-        faculty=Faculty.query.filter_by(wsu_id=wsu_id.data).first()
+        faculty=User.query.filter_by(wsu_id=wsu_id.data).first()
         if faculty is not None:
                 raise ValidationError('The WSU ID already exists!.')
 
@@ -50,12 +50,21 @@ class StudentRegForm(FlaskForm):
     tech_electives = StringField('Technical Electives',  validators=[DataRequired()])
     languages = StringField('Languages',  validators=[DataRequired()])
     prior_exp = StringField('Prior Experience',  validators=[DataRequired()])
-    interest = QuerySelectMultipleField( 'Interest',
+    """ interest = QuerySelectMultipleField( 'Interest',
         query_factory= get_interests,
         get_label= get_interestLabel,
         widget=ListWidget(prefix_label=False),
-        option_widget=CheckboxInput() )
+        option_widget=CheckboxInput() ) """
     submit = SubmitField('Submit')
+    def validate_username(self, username):
+        faculty=User.query.filter_by(username=username.data).first()
+        if faculty is not None:
+                raise ValidationError('The username already exists! Please use a different username.')
+
+    def validate_wsuId(self, wsu_id):
+        faculty=User.query.filter_by(wsu_id=wsu_id.data).first()
+        if faculty is not None:
+                raise ValidationError('The WSU ID already exists!.')
 
  
 
