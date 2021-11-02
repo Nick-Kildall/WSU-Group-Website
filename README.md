@@ -1,10 +1,3 @@
-# TermProject-TeamRANKS
-Term Project Repository for team TeamRANKS
+# Term Project Milestone Feedback
 
-Team Members:
-Daniel
-Nick
-Selina
-Sejal
-
-Project: ResearchConnect
+This branch will contain submitted project documents with comment feedback as well as rubrics for each milestone submission.
