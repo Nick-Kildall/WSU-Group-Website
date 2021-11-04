@@ -70,9 +70,6 @@ def index():
     #     return render_template('index.html', posts = posts, form=sort_form)
 
 
-@bp_routes.route('/<userid>', methods = ['GET', 'POST'])
-def view_profile(userid):
-    pass
 
 @bp_routes.route('/<userid>/edit_profile', methods=['GET', 'POST'])
 @login_required
@@ -142,28 +139,31 @@ def f_edit_profile():
 def s_edit_profile():
     sform = StudentEditForm()
     if request.method=='POST':
-        if sform.validate_on_submit():
-            current_user.phone_num = sform.phone_num.data
-            current_user.set_password(sform.password.data) 
-            current_user.major = sform.major.data
-            current_user.gpa = sform.gpa.data
-            current_user.grad_date = sform.grad_date.data
-            current_user.tech_electives = sform.tech_electives.data
-            current_user.languages = sform.languages.data
-            current_user.prior_exp = sform.prior_exp.data
-            db.session.add(current_user)
-            db.session.commit()
-            flash("Your changes have been saved")
-            return redirect(url_for('routes.index'))
+        if current_user.user_type == "Student":
+            if sform.validate_on_submit():
+                current_user.phone_num = sform.phone_num.data
+                current_user.set_password(sform.password.data) 
+                current_user.major = sform.major.data
+                current_user.gpa = sform.gpa.data
+                current_user.grad_date = sform.grad_date.data
+                current_user.tech_electives = sform.tech_electives.data
+                current_user.languages = sform.languages.data
+                current_user.prior_exp = sform.prior_exp.data
+                db.session.add(current_user)
+                db.session.commit()
+                flash("Your changes have been saved")
+                return redirect(url_for('routes.index'))
     elif (request.method == "GET"):
         # Populate DB with User data
-        sform.phone_num.data = current_user.phone_num
-        sform.major.data = current_user.major
-        sform.gpa.data = current_user.gpa
-        sform.grad_date.data = current_user.grad_date
-        sform.tech_electives.data = current_user.tech_electives
-        sform.languages.data = current_user.languages
-        sform.prior_exp.data = current_user.prior_exp
+        print(Student(current_user.major))
+        if current_user.user_type == "Student":
+            sform.phone_num.data = current_user.phone_num
+            sform.major.data = current_user.major
+            sform.gpa.data = current_user.gpa
+            sform.grad_date.data = current_user.grad_date
+            sform.tech_electives.data = current_user.tech_electives
+            sform.languages.data = current_user.languages
+            sform.prior_exp.data = current_user.prior_exp
         #sform.interest.data = current_user.interest
     else:
         pass 
