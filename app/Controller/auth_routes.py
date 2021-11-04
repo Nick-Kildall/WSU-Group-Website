@@ -18,7 +18,7 @@ def f_register():
     rform=FacultyRegForm()
     if rform.validate_on_submit():
         faculty=Faculty(username=rform.username.data, firstname=rform.firstname.data,
-                        lastname=rform.lastname.data,phone_num=rform.phone_num.data,wsu_id=rform.wsu_id.data)
+                        lastname=rform.lastname.data,phone_num=rform.phone_num.data,wsu_id=rform.wsu_id.data, user_type="Faculty")
         faculty.set_password(rform.password.data)
         db.session.add(faculty)
         db.session.commit()
@@ -32,15 +32,17 @@ def student_registration():
         return redirect(url_for('routes.index'))
     srform = StudentRegForm()
     if srform.validate_on_submit():
+        
         newStudent = Student(username = srform.username.data, 
             phone_num = srform.phone_num.data, firstname = srform.firstname.data,
             lastname = srform.lastname.data, wsu_id = srform.wsu_id.data,
             major = srform.major.data, gpa = srform.gpa.data,
             grad_date = srform.grad_date.data, tech_electives = srform.tech_electives.data,
-            languages = srform.languages.data, prior_exp = srform.prior_exp.data)
+            languages = srform.languages.data, prior_exp = srform.prior_exp.data, user_type="Student")
         newStudent.set_password(srform.password.data) 
-        #for tempInterest in srform.interest.data:
-        #    newStudent.interests.append(tempInterest)
+        for tempInterest in srform.interest.data:
+           newStudent.interests.append(tempInterest)
+           print(tempInterest)
         db.session.add(newStudent)
         db.session.commit()
         flash("Congratulations, you are now a registered student!")

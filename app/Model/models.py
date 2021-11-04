@@ -11,7 +11,7 @@ Base = declarative_base()
 def load_user(id):
     return User.query.get(int(id))
 
-userInterests = db.Table('userInterests',
+studentInterests = db.Table('studentInterests',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'))
 )
@@ -52,9 +52,9 @@ class Interest(db.Model):
         lazy='dynamic'),
         lazy='dynamic')
     users = db.relationship('User',
-        secondary = userInterests,
-        primaryjoin=(userInterests.c.interest_id == id),
-        backref=db.backref('userInterests',
+        secondary = studentInterests,
+        primaryjoin=(studentInterests.c.interest_id == id),
+        backref=db.backref('studentInterests',
         lazy='dynamic'),
         lazy='dynamic')
 
@@ -71,13 +71,18 @@ class User(db.Model,UserMixin):
     lastname = db.Column(db.String(64))
     phone_num=db.Column(db.String(15))
     wsu_id=db.Column(db.String(10),index=True)
-    interests = db.relationship("Interest",
-        secondary = userInterests,
-        primaryjoin=(userInterests.c.user_id == id),
-        backref=db.backref('userInterests',
-        lazy='dynamic'),
-        lazy='dynamic')
+    # interests = db.relationship("Interest",
+    #     secondary = userInterests,
+    #     primaryjoin=(userInterests.c.user_id == id),
+    #     backref=db.backref('userInterests',
+    #     lazy='dynamic'),
+    #     lazy='dynamic')
+    user_type = db.Column(db.String(50))
 
+    __mapper_args__ = {
+        'polymorphic_identity': 'users',
+        'with_polymorphic': '*',
+    }
     
     def __repr__(self):
         return '<ID: {} Username: {}>'.format(self.id,self.username)
@@ -96,17 +101,32 @@ class Faculty(User):
 
     id = db.Column(db.ForeignKey("user.id"), primary_key=True)
 
+    __mapper_args__ = {
+        'polymorphic_identity': 'faculty',
+        'with_polymorphic': '*'
+    }
+
 
 
 class Student(User):
+
     id = db.Column(db.ForeignKey("user.id"), primary_key=True)
-    status = db.Column(db.String(30))
     major = db.Column(db.String(64), default = "")
     gpa = db.Column(db.String(5),default = "")
     grad_date = db.Column(db.String(64),default = "")
     tech_electives = db.Column(db.String(1000),default = "")
     languages = db.Column(db.String(1000),default = "")
     prior_exp = db.Column(db.String(10000),default = "")
+    interests = db.relationship("Interest",
+        secondary = studentInterests,
+        primaryjoin=(studentInterests.c.user_id == id),
+        backref=db.backref('studentInterests',
+        lazy='dynamic'),
+        lazy='dynamic')
+    __mapper_args__ = {
+        'polymorphic_identity': 'student',
+        'with_polymorphic': '*'
+    }
     
 
 
