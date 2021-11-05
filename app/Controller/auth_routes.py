@@ -13,8 +13,8 @@ bp_auth.template_folder = Config.TEMPLATE_FOLDER
 
 @bp_auth.route('/faculty_registration', methods=['GET', 'POST'])
 def f_register():
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('routes.index'))
+    if current_user.is_authenticated:
+        return redirect(url_for('routes.f_index'))
     rform=FacultyRegForm()
     if rform.validate_on_submit():
         faculty=Faculty(username=rform.username.data, firstname=rform.firstname.data,
@@ -23,16 +23,15 @@ def f_register():
         db.session.add(faculty)
         db.session.commit()
         flash('Congratulations, you are now a registered faculty member!')
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('routes.f_index'))
     return render_template('f_registration.html',form=rform)
 
 @bp_auth.route('/student_registration', methods=['GET','POST'])
 def student_registration():
     if current_user.is_authenticated:
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('routes.s_index'))
     srform = StudentRegForm()
     if srform.validate_on_submit():
-        
         newStudent = Student(username = srform.username.data, 
             phone_num = srform.phone_num.data, firstname = srform.firstname.data,
             lastname = srform.lastname.data, wsu_id = srform.wsu_id.data,
@@ -42,11 +41,10 @@ def student_registration():
         newStudent.set_password(srform.password.data) 
         for tempInterest in srform.interest.data:
            newStudent.interests.append(tempInterest)
-           print(tempInterest)
         db.session.add(newStudent)
         db.session.commit()
         flash("Congratulations, you are now a registered student!")
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('routes.s_index'))
     print(srform.password.errors)
     print(srform.password.errors)
     print("out sform")
@@ -57,7 +55,10 @@ def student_registration():
 @bp_auth.route('/login', methods =['GET','POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('routes.index'))
+        if current_user.user_type=="Student":
+            return redirect(url_for('routes.s_index'))
+        else:
+             return redirect(url_for('routes.f_index'))
     lform = LoginForm()
     if lform.validate_on_submit():
         user = User.query.filter_by(username = lform.username.data).first()
@@ -65,7 +66,10 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('auth.login'))
         login_user(user, remember = lform.remember_me.data)
-        return redirect(url_for('routes.index'))
+        if current_user.user_type=="Student":
+            return redirect(url_for('routes.s_index'))
+        else:
+             return redirect(url_for('routes.f_index'))
     return render_template('login.html', title = 'Sign In', form=lform)
 
 @bp_auth.route('/logout', methods = ['GET'])
