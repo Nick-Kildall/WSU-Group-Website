@@ -155,7 +155,7 @@ def s_edit_profile():
                 return redirect(url_for('routes.index'))
     elif (request.method == "GET"):
         # Populate DB with User data
-        print(Student(current_user.major))
+        
         if current_user.user_type == "Student":
             sform.phone_num.data = current_user.phone_num
             sform.major.data = current_user.major
