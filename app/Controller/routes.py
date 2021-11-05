@@ -27,11 +27,18 @@ def get_posts(selection):
         print(selection)
         return Post.query.filter(Post.interests.any(name = selection)).all()
 
+@bp_routes.route('/f_index', methods=['GET', 'POST'])
+@login_required
+def f_index():
+    posts = Post.query.order_by(Post.id.desc())
+    return render_template('faculty_home.html', posts = posts)
 
 @bp_routes.route('/', methods=['GET', 'POST'])
-@bp_routes.route('/index', methods=['GET', 'POST'])
+@bp_routes.route('/s_index', methods=['GET', 'POST'])
 @login_required
-def index():
+def s_index():
+
+    
     interest_list = []
 
     #if (current_user.is_authenticated):
@@ -57,7 +64,7 @@ def index():
             form = SortForm()
     else:
         posts = Post.query.order_by(Post.id.desc())
-    return render_template('index.html', posts = posts, form=sort_form)
+    return render_template('student_home.html', posts = posts, form=sort_form)
 
     # if request.method == 'POST':
     #     if sort_form.validate_on_submit():
@@ -127,11 +134,11 @@ def f_edit_profile():
             db.session.add(current_user)
             db.session.commit()
             flash("Your changes have been saved")
-            return redirect(url_for('routes.index'))
-        elif (request.method == "GET"):
+            return redirect(url_for('routes.f_index'))
+    elif (request.method == "GET"):
             eform.phone_num.data=current_user.phone_num
-        else:
-            pass
+    else:
+        pass
     return render_template('f_edit_profile.html', title='Edit Profile', form=eform)
 
 @bp_routes.route('/s_edit_profile', methods=['GET','POST'])
@@ -149,10 +156,12 @@ def s_edit_profile():
                 current_user.tech_electives = sform.tech_electives.data
                 current_user.languages = sform.languages.data
                 current_user.prior_exp = sform.prior_exp.data
+                current_user.interests=sform.interest.data
+
                 db.session.add(current_user)
                 db.session.commit()
                 flash("Your changes have been saved")
-                return redirect(url_for('routes.index'))
+                return redirect(url_for('routes.s_index'))
     elif (request.method == "GET"):
         # Populate DB with User data
         
@@ -164,7 +173,7 @@ def s_edit_profile():
             sform.tech_electives.data = current_user.tech_electives
             sform.languages.data = current_user.languages
             sform.prior_exp.data = current_user.prior_exp
-        #sform.interest.data = current_user.interest
+            sform.interest.data = current_user.interests
     else:
         pass 
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
@@ -180,9 +189,13 @@ def createpost():
         db.session.add(newPost)
         db.session.commit()
         flash("Your post has been created.")
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('routes.f_index'))
     return render_template('createpost.html', title='Create Post', form=ppost)
 
+@bp_routes.route('/s_your_app', methods=['GET','POST'])
+@login_required
+def s_your_app():
+    return render_template('s_your_apps.html',title='Your Application')
 
 @bp_routes.route('/apply', methods=['GET','POST'])
 def apply(studentid):

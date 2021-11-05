@@ -14,14 +14,14 @@ def get_interestLabel(interest):
     return interest.name
 
 class FacultyEditForm(FlaskForm):
-    password = PasswordField('Password',validators=[DataRequired()])
-    password2 = PasswordField('Repeat Password',validators=[DataRequired(),EqualTo('password')])
+    password = PasswordField('Password')
+    password2 = PasswordField('Repeat Password',validators=[EqualTo('password')])
     phone_num = StringField('Phone Number',  validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class StudentEditForm(FlaskForm):
-    password = PasswordField('Password',validators=[DataRequired()])
-    password2 = PasswordField('Repeat Password',validators=[DataRequired(), EqualTo('password')])
+    password = PasswordField('Password')
+    password2 = PasswordField('Repeat Password', validators=[EqualTo('password')])
     phone_num = StringField('Phone Number',  validators=[DataRequired()])
     major = StringField('Major',  validators=[DataRequired()])
     gpa = StringField('GPA',  validators=[DataRequired()])
@@ -29,11 +29,12 @@ class StudentEditForm(FlaskForm):
     tech_electives = StringField('Technical Electives',  validators=[DataRequired()])
     languages = StringField('Languages',  validators=[DataRequired()])
     prior_exp = StringField('Prior Experience',  validators=[DataRequired()])
-    """ interest = QuerySelectMultipleField( 'Interest',
+    interest = QuerySelectMultipleField( 'Interest',
         query_factory= get_interests,
         get_label= get_interestLabel,
         widget=ListWidget(prefix_label=False),
-        option_widget=CheckboxInput() ) """
+        option_widget=CheckboxInput() ) 
+    
     submit = SubmitField('Submit')
 
 class SortForm(FlaskForm):

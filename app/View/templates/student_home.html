@@ -1,11 +1,30 @@
 {% extends "base.html" %}
 
-
-{% block content %} 
+{% block content %}
 
     <h1>Welcome to Research Connect!</h1>
+    <h2>Hello, {{ current_user.firstname }} {{ current_user.lastname }}</h2>
 
-    <br>Hello, {{ current_user.firstname }} {{ current_user.lastname }}
+    {% if form %}
+    <form action = "http://localhost:5000/index" method = "POST" style = "padding-left:16px;" class = 'formselect'>
+        {{ form.hidden_tag() }}
+        
+        <div class = 'formselect'>
+            {{ form.sort_by.label}}
+            {{ form.sort_by() }}
+            {{ form.submit(class = 'button') }}
+        </div>
+    {% endif %}
 
+    
+    </form>
+    <div class = 'postlist'>
+    {% for post in posts %}
+        <div class = 'post-box'>
+            {% include '_post.html' %}
+        </div>
+    {% endfor %}
+    </div>
+    
 
 {% endblock %}
