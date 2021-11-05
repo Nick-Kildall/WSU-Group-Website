@@ -156,6 +156,8 @@ def s_edit_profile():
                 current_user.tech_electives = sform.tech_electives.data
                 current_user.languages = sform.languages.data
                 current_user.prior_exp = sform.prior_exp.data
+                current_user.interests=sform.interest.data
+
                 db.session.add(current_user)
                 db.session.commit()
                 flash("Your changes have been saved")
@@ -171,7 +173,7 @@ def s_edit_profile():
             sform.tech_electives.data = current_user.tech_electives
             sform.languages.data = current_user.languages
             sform.prior_exp.data = current_user.prior_exp
-        #sform.interest.data = current_user.interest
+            sform.interest.data = current_user.interests
     else:
         pass 
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
@@ -187,9 +189,13 @@ def createpost():
         db.session.add(newPost)
         db.session.commit()
         flash("Your post has been created.")
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('routes.f_index'))
     return render_template('createpost.html', title='Create Post', form=ppost)
 
+@bp_routes.route('/s_your_app', methods=['GET','POST'])
+@login_required
+def s_your_app():
+    return render_template('s_your_apps.html',title='Your Application')
 
 @bp_routes.route('/apply', methods=['GET','POST'])
 def apply(studentid):
