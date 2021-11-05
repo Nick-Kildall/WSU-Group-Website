@@ -3,13 +3,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from flask_login import UserMixin
 from app import login
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
 
 @login.user_loader  
 def load_user(id):
     return User.query.get(int(id))
+ 
+    
+    
 
 studentInterests = db.Table('studentInterests',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
@@ -62,7 +62,7 @@ class Interest(db.Model):
         return '<ID: {} Name: {}>'.format(self.id,self.name)
 
 class User(db.Model,UserMixin):
-    
+    __tablename__='user'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     username=db.Column(db.String(120),unique=True,index=True)
@@ -71,17 +71,11 @@ class User(db.Model,UserMixin):
     lastname = db.Column(db.String(64))
     phone_num=db.Column(db.String(15))
     wsu_id=db.Column(db.String(10),index=True)
-    # interests = db.relationship("Interest",
-    #     secondary = userInterests,
-    #     primaryjoin=(userInterests.c.user_id == id),
-    #     backref=db.backref('userInterests',
-    #     lazy='dynamic'),
-    #     lazy='dynamic')
     user_type = db.Column(db.String(50))
 
     __mapper_args__ = {
         'polymorphic_identity': 'users',
-        'with_polymorphic': '*',
+        'polymorphic_on':user_type
     }
     
     def __repr__(self):
@@ -98,18 +92,17 @@ class User(db.Model,UserMixin):
 
 
 class Faculty(User):
-
+    __tablename__='faculty'
     id = db.Column(db.ForeignKey("user.id"), primary_key=True)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'faculty',
-        'with_polymorphic': '*'
+        'polymorphic_identity': 'Faculty'
     }
 
 
 
 class Student(User):
-
+    __tablename__='student'
     id = db.Column(db.ForeignKey("user.id"), primary_key=True)
     major = db.Column(db.String(64), default = "")
     gpa = db.Column(db.String(5),default = "")
@@ -124,8 +117,7 @@ class Student(User):
         lazy='dynamic'),
         lazy='dynamic')
     __mapper_args__ = {
-        'polymorphic_identity': 'student',
-        'with_polymorphic': '*'
+        'polymorphic_identity': 'Student',
     }
     
 
