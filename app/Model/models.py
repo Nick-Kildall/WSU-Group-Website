@@ -1,4 +1,5 @@
 from datetime import datetime
+from flask.helpers import flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from flask_login import UserMixin
@@ -31,6 +32,7 @@ class Post(db.Model):
     faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
     commitment = db.Column(db.Integer)
     qualifications = db.Column(db.String(2500))
+    students_applied = db.relationship("Applied", back_populates = "post_applied")
     interests = db.relationship('Interest',
         secondary = postInterests,
         primaryjoin=(postInterests.c.post_id == id), 
@@ -110,6 +112,7 @@ class Student(User):
     tech_electives = db.Column(db.String(1000),default = "")
     languages = db.Column(db.String(1000),default = "")
     prior_exp = db.Column(db.String(10000),default = "")
+    applications = db.relationship("Applied", back_populates = "student_applied")
     interests = db.relationship("Interest",
         secondary = studentInterests,
         primaryjoin=(studentInterests.c.user_id == id),
@@ -120,7 +123,29 @@ class Student(User):
         'polymorphic_identity': 'Student',
     }
     
+    def apply(self, thePost):
+        if not self.is_applied(thePost):
+            newApplication = Applied(post_applied = thePost)
+            self.applications.append(newApplication)
+            db.session.commit()
+            flash('Applied to post {}'.format(thePost.title))
+        else:
+            flash("Already applied to post")
+    
+    def is_applied(self, thePost):
+        return (Applied.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).count() > 0)
 
+class Applied(db.Model):
+    ### Relationships
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key = True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key = True)
+    student_applied = db.relationship('Student')
+    post_applied = db.relationship('Post')
+
+    ### Application Form elements
+    # description = db.Column(db.String(2500))
+    # reference_name = db.Column(db.String(256))
+    # reference_email = db.Column(db.String(256))
 
 
 
