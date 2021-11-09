@@ -11,45 +11,37 @@
     </tr>
 </table> -->
 
-
-
-
 <table class = "posttable" style = "width:100%" valign="top">
-
-    <td width = "100%">
-        <tr> 
-            <td colspan="3"><div class="posttitle"> {{post.title}} </div>
-            </td>
-        </tr>
-        <tr> 
-            <td colspan="3"><div class="postmessage"> 
-                Goal Objective:  
-                <br>
-                {{post.description}}
-            </div>
-            </td>
-
-        </tr>
-    
-        <tr> 
-            <td colspan="3"><div class="postmessage"> Date: {{post.startDate}} - {{post.endDate}} </div>
-            </td>
-        </tr>
-        <tr> 
-            <td colspan="3"><div class="postmessage">  Time Commitment: {{post.commitment}} hours / week </div>
-            </td>
-
-        </tr>
-        <tr> 
-            <td colspan="3"><div class="postmessage"> Qualifications:  
-            <br>
-            {{post.qualifications}}
-
-            </div>
-            </td>
-
-        </tr>
-
-    </td>
-
+    <tr> 
+        <td colspan="3"><div class="posttitle"> {{post.title}} </div>
+        </td>
+    </tr>
+    <tr> 
+        <td width = "100%"><div class="postmessage"> 
+            Goal Objective: {{post.description}}
+        </div>
+        </td>
+    </tr>
+    <tr> 
+        <td><div class="postmessage"> Date: {{post.startDate}} - {{post.endDate}} </div>
+        </td>
+    </tr>
+    <tr> 
+        <td><div class="postmessage">  Time Commitment: {{post.commitment}} hours / week </div>
+        </td>
+    </tr>
+    <tr> 
+        <td><div class="postmessage"> Qualifications: {{ post.qualifications }}
+        </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <!--{% if current_user.id == post.faculty_id %}-->
+            <form action = "{{ url_for('routes.delete', post_id = post.id) }}" method = "post">
+                <input type = "submit" value = "Delete">
+            </form>
+            <!--{% endif %}-->
+        </td>
+    </tr>
 </table>
