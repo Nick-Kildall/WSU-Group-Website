@@ -4,8 +4,8 @@ from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import  current_user, login_required
 from flask_wtf.recaptcha.widgets import RecaptchaWidget
-from app.Model.models import Faculty, Student, Post, User
-from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm
+from app.Model.models import Faculty, Student, Post, User, Applied
+from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm, ApplicationForm
 from config import Config
 
 from app import db
@@ -197,6 +197,18 @@ def createpost():
 def s_your_app():
     return render_template('s_your_apps.html',title='Your Application')
 
-@bp_routes.route('/apply', methods=['GET','POST'])
-def apply(studentid):
-    return
+@bp_routes.route('/apply/<postid>', methods=['GET','POST'])
+def apply(postid):
+    thePost = Post.query.filter_by(id = postid).first()
+    if thePost is None:
+        flash("Post with id '{}' not found").format(postid)
+        return redirect(url_for("routes.s_index"))
+    current_user.apply(thePost)
+    db.session.commit()
+    return redirect(url_for("routes.s_index"))
+            
+    #     newApplication = Applied(description = applyform.description.data, reference_name = applyform.reference_name.data, reference_email = applyform.reference_email.data)
+    #     current_user.apply(postid, newApplication)
+    #     flash("You successfully applied")
+    #     return redirect(url_for("routes.index"))
+    #return render_template('apply.html', title = 'Apply', form = applyform)
