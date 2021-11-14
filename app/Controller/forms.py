@@ -56,9 +56,9 @@ class PostForm(FlaskForm):
     submit = SubmitField('Post',  validators=[DataRequired()])
 
 class ApplicationForm(FlaskForm):
-#     description = StringField('Description', validators=[DataRequired()])
-#     reference_name = StringField('Reference Name', validators=[DataRequired()])
-#     reference_email = StringField('Reference Email', validators=[DataRequired()])
+    studentDescription = StringField('Description', validators=[DataRequired()])
+    reference_name = StringField('Reference Name', validators=[DataRequired()])
+    reference_email = StringField('Reference Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Submit')
 
 
