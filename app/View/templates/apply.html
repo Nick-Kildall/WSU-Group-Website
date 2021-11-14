@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Apply to Research Opportunity</h1>
+
+    {% if form %}
+    
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <div>
+                <!--Displays the form item for the post's `title`.--> 
+                {{ form.studentDescription.label }}<br>
+                {{ form.studentDescription(class="forminput") }}<br>
+
+                {% for error in form.studentDescription.errors %} 
+                <span style = "color: red;">[ {{error}} ]</span>
+                {% endfor %} 
+
+                {{ form.reference_name.label }}<br>
+                {{ form.reference_name(class="forminput") }}<br>
+
+                {% for error in form.reference_name.errors %} 
+                <span style = "color: red;">[ {{error}} ]</span>
+                {% endfor %} 
+
+                {{ form.reference_email.label }}<br>
+                {{ form.reference_email(class="forminput") }}<br>
+
+                {% for error in form.reference_email.errors %} 
+                <span style = "color: red;">[ {{error}} ]</span>
+                {% endfor %} 
+                
+                {{ form.submit(class="button") }}
+
+    {% endif %}
+
+{% endblock %}
