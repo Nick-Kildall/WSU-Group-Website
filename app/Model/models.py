@@ -25,14 +25,15 @@ postInterests = db.Table('postInterests',
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
     title = db.Column(db.String(150))
     endDate = db.Column(db.String(64))
     startDate = db.Column(db.String(64))
     description = db.Column(db.String(2500))
-    faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
     commitment = db.Column(db.Integer)
     qualifications = db.Column(db.String(2500))
-    students_applied = db.relationship("Apply", back_populates = "post_applied")
+    #applications = db.relationship('Application', back_populates = 'post', lazy = 'dynamic')
+    #students_applied = db.relationship("Apply", back_populates = "post_applied")
     interests = db.relationship('Interest',
         secondary = postInterests,
         primaryjoin=(postInterests.c.post_id == id), 
@@ -121,7 +122,7 @@ class Student(User):
     tech_electives = db.Column(db.String(1000),default = "")
     languages = db.Column(db.String(1000),default = "")
     prior_exp = db.Column(db.String(10000),default = "")
-    applications = db.relationship("Apply", back_populates = "student_applied")
+    #applications = db.relationship("Apply", back_populates = "student_applied")
     interests = db.relationship("Interest",
         secondary = studentInterests,
         primaryjoin=(studentInterests.c.user_id == id),
@@ -132,34 +133,35 @@ class Student(User):
         'polymorphic_identity': 'Student',
     }
     
-    def apply(self, thePost):
-        if not self.is_applied(thePost):
-            newApply = Apply(post_applied = thePost)
-            self.applications.append(newApply)
-            db.session.commit()
-            flash('Applied to post {}'.format(thePost.title))
-        else:
-            flash("Already applied to post")
+    #def apply(self, thePost):
+        #if not self.is_applied(thePost):
+            #newApply = Application(post_applied = thePost)
+            #self.applications.append(newApply)
+            #db.session.commit()
+            #flash('Applied to post {}'.format(thePost.title))
+        #else:
+            #flash("Already applied to post")
     
-    def is_applied(self, thePost):
-        return (Apply.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).count() > 0)
+    #def is_applied(self, thePost):
+    #    return (Application.query.filter_by(id = self.id).filter_by(post_id = thePost.id).count() > 0)
 
-class Apply(db.Model):
+#class Apply(db.Model):
     ### Relationships
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key = True)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key = True)
-    student_applied = db.relationship('Student')
-    post_applied = db.relationship('Post')
+    #student_id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key = True)
+    #post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key = True)
+   # student_applied = db.relationship('Student')
+    #post_applied = db.relationship('Post')
     
-class Application(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    student_id = db.Column(db.Integer)
-
+class Application(Student):
+    __tablename__='application'
+    student_id = db.Column(db.ForeignKey("student.id"), primary_key=True)
+    post = db.Column(db.Integer, db.ForeignKey('post.id'))
+    #student_id = db.Column(db.Integer)
+    #post_id = db.Column(db.Integer)
     ### Form variables
     studentDescription = db.Column(db.String(2500))
     reference_name = db.Column(db.String(256))
     reference_email = db.Column(db.String(256))
-
     ### Fill relevant post details
     title = db.Column(db.String(150))
     endDate = db.Column(db.String(64))
@@ -168,6 +170,10 @@ class Application(db.Model):
     commitment = db.Column(db.Integer)
     qualifications = db.Column(db.String(2500))
     
+    __mapper_args__ = {
+        'polymorphic_identity': 'Application',
+        'inherit_condition': student_id == Student.id
+    }
     def __repr__(self):
         return '<Application class: id {} - title: {}>'.format(self.id, self.title)
 

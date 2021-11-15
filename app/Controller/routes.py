@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import  current_user, login_required
 from flask_wtf.recaptcha.widgets import RecaptchaWidget
-from app.Model.models import Faculty, Student, Post, User, Apply, Application
+from app.Model.models import Faculty, Student, Post, User, Application
 from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm, ApplicationForm
 from config import Config
 
@@ -27,18 +27,25 @@ def get_posts(selection):
         print(selection)
         return Post.query.filter(Post.interests.any(name = selection)).all()
 
+#all_posts is used to reuse faculty home to display all posts 
+#all_posts == 0 implies you are viewing just the faculty's posts 
 @bp_routes.route('/f_index', methods=['GET', 'POST'])
 @login_required
 def f_index():
+    posts = current_user.get_user_posts()
+    return render_template('faculty_home.html', posts = posts,all_posts = 0)
+
+@bp_routes.route('/allposts', methods=['GET', 'POST'])
+@login_required
+def allposts():
     posts = Post.query.order_by(Post.id.desc())
-    #posts = current_user.get_user_posts()
-    return render_template('faculty_home.html', posts = posts)
+    return render_template('faculty_home.html', posts = posts,all_posts = 1)
 
 @bp_routes.route('/f_review', methods=['GET', 'POST'])
 @login_required
 def f_review():
     posts = current_user.get_user_posts()
-    return render_template('faculty_home.html', posts = posts)
+    return render_template('f_review_applications', posts = posts)
 
 @bp_routes.route('/applicants/<post_id>', methods=['GET'])
 @login_required
@@ -47,8 +54,9 @@ def applicants(post_id):
     if thepost is None:
         flash("Error")
         return redirect(url_for('routes.f_review'))
-    students = thepost.get_students_applied()
-    return render_template('faculty_home.html', students = students)
+    studentApplications = Application.query.filter_by(post = post_id).all()
+    
+    return render_template('post_student_list.html', studentApplications = studentApplications)
 
 @bp_routes.route('/', methods=['GET', 'POST'])
 @bp_routes.route('/s_index', methods=['GET', 'POST'])
@@ -215,11 +223,11 @@ def s_your_app():
 
     ### Query all applications to render
     studentApplications = Application.query.filter_by(student_id = current_user.id).all()
-
+    print(studentApplications)
     return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
 
 @bp_routes.route('/apply/<postid>', methods=['GET','POST'])
-def apply(postid):
+def apply(postid): 
     applyForm = ApplicationForm()
     # Applies student to postition
     if applyForm.validate_on_submit(): 
@@ -227,21 +235,26 @@ def apply(postid):
         if thePost is None:
             flash("Post with id '{}' not found").format(postid)
             return redirect(url_for("routes.s_index"))
-        
         ### creates many-to-many relationship
-        current_user.apply(thePost)
+        #current_user.apply(thePost)
         #print(current_user.applications)
-        theApply = Apply.query.filter_by(post_id = postid).first()
+        #theApply = Apply.query.filter_by(post_id = postid).first()
         ### adds varibles from the post and application
-        theApplication = Application(student_id = theApply.student_id, studentDescription = applyForm.studentDescription.data, reference_name = applyForm.reference_name.data,
-            reference_email = applyForm.reference_email.data, title = thePost.title, endDate = thePost.endDate, 
+        #theApplication = Application(student_id = theApply.student_id,post_id = postid, studentDescription = applyForm.studentDescription.data, reference_name = applyForm.reference_name.data,
+            #reference_email = applyForm.reference_email.data, title = thePost.title, endDate = thePost.endDate, 
+            #startDate = thePost.startDate, description = thePost.description, commitment = thePost.commitment,
+            #qualifications = thePost.qualifications)
+        newApplication = Application(post= postid,reference_email = applyForm.reference_email.data, title = thePost.title, endDate = thePost.endDate, 
             startDate = thePost.startDate, description = thePost.description, commitment = thePost.commitment,
-            qualifications = thePost.qualifications)
-
-        db.session.add(theApplication)
+            qualifications = thePost.qualifications )
+        print("HEY THIS PROBABLY WORKED")
+        db.session.add(newApplication)
+        print("HEY THIS SORT OF PROBABLY WORKED")
         db.session.commit()
+        print("HEY THIS SORT OF DEFINITELY WORKED")
         print("pushed app")
-
+        test1 = Application.query.all()
+        print(test1)
         return redirect(url_for("routes.s_index"))
    
     # sends student to application form

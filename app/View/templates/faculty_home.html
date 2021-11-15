@@ -4,14 +4,26 @@
 
     <h1>Welcome to Research Connect!</h1>
     <h2>Hello, {{ current_user.firstname }} {{ current_user.lastname }}</h2>
-
-
+    
+    {%if all_posts == 0%}
+    <h2>Your Research Openings</h2>
+    {%endif%}
     <div class = 'postlist'>
-    {% for post in posts %}
+        {% for post in posts %}
         <div class = 'post-box'>
             {% include '_post.html' %}
+
+        <form action="{{url_for('routes.applicants',post_id = post.id)}}" method="get">
+                <input type="submit" value="Applicants" >
+                </form>                                
+
         </div>
-    {% endfor %}
+    </div>
+    <div>
+                
+    </div>
+    
+{% endfor %}
     </div>
     
 
