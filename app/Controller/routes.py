@@ -205,6 +205,19 @@ def s_your_app():
         print(app.student_id)
     return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
 
+@bp_routes.route('/applicants/<post_id>', methods=['GET'])
+@login_required
+def applicants(post_id):
+    thepost = Post.query.filter_by(id = post_id).first()
+    if thepost is None:
+        flash("Error")
+        return redirect(url_for('routes.f_review'))
+    studentApplications = Application.query.filter_by(post_id = post_id).all()
+    for app in studentApplications:
+        print(app)
+
+    return render_template('post_student_list.html', studentApplications = studentApplications)
+
 @bp_routes.route('/apply/<postid>', methods=['GET','POST'])
 def apply(postid):
     applyForm = ApplicationForm()
