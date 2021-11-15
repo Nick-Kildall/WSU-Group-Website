@@ -1,4 +1,5 @@
 from datetime import datetime
+from flask.helpers import flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from flask_login import UserMixin
@@ -30,6 +31,7 @@ class Post(db.Model):
     faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
     commitment = db.Column(db.Integer)
     qualifications = db.Column(db.String(2500))
+    students_applied = db.relationship("Apply", back_populates = "post_applied")
     interests = db.relationship('Interest',
         secondary = postInterests,
         primaryjoin=(postInterests.c.post_id == id), 
@@ -38,6 +40,9 @@ class Post(db.Model):
 
     def get_interests(self):
         return self.interests
+
+    def __repr__(self):
+        return '<ID: {} Title: {}>'.format(self.id,self.title)
 
 
 class Interest(db.Model):
@@ -109,6 +114,7 @@ class Student(User):
     tech_electives = db.Column(db.String(1000),default = "")
     languages = db.Column(db.String(1000),default = "")
     prior_exp = db.Column(db.String(10000),default = "")
+    applications = db.relationship("Apply", back_populates = "student_applied")
     interests = db.relationship("Interest",
         secondary = studentInterests,
         primaryjoin=(studentInterests.c.user_id == id),
@@ -119,7 +125,95 @@ class Student(User):
         'polymorphic_identity': 'Student',
     }
     
+    def apply(self, thePost):
+        if not self.is_applied(thePost):
+            newApply = Apply(post_applied = thePost)
+            self.applications.append(newApply)
+            db.session.commit()
+            flash('Applied to post {}'.format(thePost.title))
+        else:
+            flash("Already applied to post")
+    
+    def is_applied(self, thePost):
+        return (Apply.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).count() > 0)
 
+class Apply(db.Model):
+    ### Relationships
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key = True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key = True)
+    student_applied = db.relationship('Student')
+    post_applied = db.relationship('Post')
+    
+class Application(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    student_id = db.Column(db.Integer)
+
+    ### Form variables
+    studentDescription = db.Column(db.String(2500))
+    reference_name = db.Column(db.String(256))
+    reference_email = db.Column(db.String(256))
+
+    ### Fill relevant post details
+    title = db.Column(db.String(150))
+    endDate = db.Column(db.String(64))
+    startDate = db.Column(db.String(64))
+    description = db.Column(db.String(2500))
+    commitment = db.Column(db.Integer)
+    qualifications = db.Column(db.String(2500))
+    
+    def __repr__(self):
+        return '<Application class: id {} - title: {}>'.format(self.id, self.title)
+
+### student_id not null integrity error
+# class Apply(db.Model):
+#     ### Relationships
+#     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key = True)
+#     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key = True)
+#     student_applied = db.relationship('Student')
+#     post_applied = db.relationship('Post')
+    
+#     ### Form variables
+#     studentDescription = db.Column(db.String(2500))
+#     reference_name = db.Column(db.String(256))
+#     reference_email = db.Column(db.String(256))
+
+#     ### Fill relevant post details
+#     title = db.Column(db.String(150))
+#     endDate = db.Column(db.String(64))
+#     startDate = db.Column(db.String(64))
+#     description = db.Column(db.String(2500))
+#     commitment = db.Column(db.Integer)
+#     qualifications = db.Column(db.String(2500))
+    
+#     def __repr__(self):
+#         return '<Apply class: student_id {} - post_id: {} - id: {}>'.format(self.student_id,self.post_id)
+
+
+#### doesn't fill values once session commits. Useless
+# class Apply(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+
+#     ### Relationships
+#     student_id = db.Column(db.Integer, db.ForeignKey('student.id'))
+#     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+#     student_applied = db.relationship('Student')
+#     post_applied = db.relationship('Post')
+    
+#     ### Form variables
+#     studentDescription = db.Column(db.String(2500))
+#     reference_name = db.Column(db.String(256))
+#     reference_email = db.Column(db.String(256))
+
+#     ### Fill relevant post details
+#     title = db.Column(db.String(150))
+#     endDate = db.Column(db.String(64))
+#     startDate = db.Column(db.String(64))
+#     description = db.Column(db.String(2500))
+#     commitment = db.Column(db.Integer)
+#     qualifications = db.Column(db.String(2500))
+    
+#     def __repr__(self):
+#         return '<Apply class: student_id {} - post_id: {} - id: {}>'.format(self.student_id,self.post_id, self.id)
 
 
 

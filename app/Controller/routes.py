@@ -4,8 +4,8 @@ from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import  current_user, login_required
 from flask_wtf.recaptcha.widgets import RecaptchaWidget
-from app.Model.models import Faculty, Student, Post, User
-from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm
+from app.Model.models import Faculty, Student, Post, User, Apply, Application
+from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm, ApplicationForm
 from config import Config
 
 from app import db
@@ -217,9 +217,43 @@ def delete(post_id):
 @bp_routes.route('/s_your_app', methods=['GET','POST'])
 @login_required
 def s_your_app():
-    return render_template('s_your_apps.html',title='Your Application')
 
+    ### Query all applications to render
+    studentApplications = Application.query.filter_by(student_id = current_user.id).all()
 
-@bp_routes.route('/apply', methods=['GET','POST'])
-def apply(studentid):
-    return
+    return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
+
+@bp_routes.route('/apply/<postid>', methods=['GET','POST'])
+def apply(postid):
+    applyForm = ApplicationForm()
+    # Applies student to postition
+    if applyForm.validate_on_submit(): 
+        thePost = Post.query.filter_by(id = postid).first()
+        if thePost is None:
+            flash("Post with id '{}' not found").format(postid)
+            return redirect(url_for("routes.s_index"))
+        
+        ### creates many-to-many relationship
+        current_user.apply(thePost)
+        #print(current_user.applications)
+        theApply = Apply.query.filter_by(post_id = postid).first()
+        ### adds varibles from the post and application
+        theApplication = Application(student_id = theApply.student_id, studentDescription = applyForm.studentDescription.data, reference_name = applyForm.reference_name.data,
+            reference_email = applyForm.reference_email.data, title = thePost.title, endDate = thePost.endDate, 
+            startDate = thePost.startDate, description = thePost.description, commitment = thePost.commitment,
+            qualifications = thePost.qualifications)
+
+        db.session.add(theApplication)
+        db.session.commit()
+        print("pushed app")
+
+        return redirect(url_for("routes.s_index"))
+   
+    # sends student to application form
+    return render_template('apply.html', title='Apply to Research Oppertunity', form=applyForm)
+            
+    #     
+    #     current_user.apply(postid, newApplication)
+    #     flash("You successfully applied")
+    #     return redirect(url_for("routes.index"))
+    #return render_template('apply.html', title = 'Apply', form = applyform)
