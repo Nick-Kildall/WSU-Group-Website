@@ -1,67 +1,47 @@
-<!-- <table class = 'table table-hover'>
-    <tr align = 'center'>
-        <td width = '60%'>{{ post.name }}</td>
-        <td width = '20%'>
-            
-            <form action = "{{ url_for('routes.apply', postid = post.id) }}">
-                <input type = 'apply', value = 'Apply', class = 'button'>
-            </form>
-            
+<table class = "posttable" style = "width:100%" valign="top">
+    <tr> 
+        <td colspan="3"><div class="posttitle"> {{post.title}} </div>
         </td>
     </tr>
-</table> -->
-
-
-
-
-<table class = "posttable" style = "width:100%" valign="top">
-
-    <td width = "100%">
-        <tr> 
-            <td colspan="3"><div class="posttitle"> {{post.title}} </div>
-            </td>
-        </tr>
-        <tr> 
-            <td colspan="3"><div class="postmessage"> 
-                Goal Objective:  
-                <br>
-                {{post.description}}
-            </div>
-            </td>
-
-        </tr>
-    
-        <tr> 
-            <td colspan="3"><div class="postmessage"> Date: {{post.startDate}} - {{post.endDate}} </div>
-            </td>
-        </tr>
-        <tr> 
-            <td colspan="3"><div class="postmessage">  Time Commitment: {{post.commitment}} hours / week </div>
-            </td>
-
-        </tr>
-        <tr> 
-            <td colspan="3"><div class="postmessage"> Qualifications:  
-            <br>
-            {{post.qualifications}}
-
-            </div>
-            </td>
-
-        </tr>
-        <tr> 
-            <td colspan="3">
-                {% if current_user.user_type == 'Student' %}
-                    {% if current_user.is_applied(post) == false %}
-                        <div style="margin-left: 75%; text-align: right;">
-                            <form action = "{{ url_for('routes.apply', postid = post.id) }}">
-                                <input type = 'submit', value = 'Apply', class = 'button'>
-                            </form>
-                        </div>
-                    {% endif %}
+    <tr> 
+        <td width = "100%"><div class="postmessage"> 
+            Goal Objective: {{post.description}}
+        </div>
+        </td>
+    </tr>
+    <tr> 
+        <td><div class="postmessage"> Date: {{post.startDate}} - {{post.endDate}} </div>
+        </td>
+    </tr>
+    <tr> 
+        <td><div class="postmessage">  Time Commitment: {{post.commitment}} hours / week </div>
+        </td>
+    </tr>
+    <tr> 
+        <td><div class="postmessage"> Qualifications: {{ post.qualifications }}
+        </div>
+        </td>
+    </tr>
+    <tr> 
+        <td colspan="3">
+            {% if current_user.user_type == 'Student' %}
+                {% if current_user.is_applied(post) == false %}
+                    <div style="margin-left: 75%; text-align: right;">
+                        <form action = "{{ url_for('routes.apply', postid = post.id) }}">
+                            <input type = 'submit', value = 'Apply', class = 'button'>
+                        </form>
+                    </div>
                 {% endif %}
-            </td>
-        </tr>
-    </td>
-
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <!--{% if current_user.id == post.faculty_id %}-->
+            <form action = "{{ url_for('routes.delete', post_id = post.id) }}" method = "post">
+                <input type = "submit" value = "Delete">
+            </form>
+            <!--{% endif %}-->
+        </td>
+    </tr>
 </table>

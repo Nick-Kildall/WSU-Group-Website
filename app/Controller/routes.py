@@ -14,6 +14,18 @@ bp_routes = Blueprint('routes', __name__)
 bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
 
 
+def load_defaults(_list):
+    interests = ["Artificial Intelligence/Machine Learning", "Front End Development", "Back End Develoipment",
+        "Data Science", "Software Engineering", "Web Development", "Full Stack", "Mobile Application", "Game Development",
+        "Cybersecurity"]
+    i = 0
+    for interest in interests:
+        _list.append([i, interest])
+        i += 1
+    _list.append([i+1, "Recommended"])
+    _list.append([i+1, "View All"])
+    return
+
 def get_posts(selection):
     if selection == 'Recommended':
         available_interests = current_user.interests.query.all()
@@ -37,23 +49,15 @@ def f_index():
 @bp_routes.route('/s_index', methods=['GET', 'POST'])
 @login_required
 def s_index():
-
-    
     interest_list = []
-
-    #if (current_user.is_authenticated):
-    #    # pull current user's interests
-    #    available_interests = current_user.interests.query.all()
-    #    interest_list = [(i.id, i.name) for i in available_interests]
-    #    interest_list.append([len(available_interests), 'Recommended'])
-    #    interest_list.append([len(available_interests)+1, 'View All'])
-    #else:
-    j = 0
-    interest_list.append([1, 'Machine Learning'])
-    interest_list.append([2, 'Full Stack'])
-    interest_list.append([3, 'Financial Modeling'])
-    interest_list.append([4, 'Recommended'])
-    interest_list.append([5, 'View All'])
+    if (current_user.is_authenticated):
+        # pull current user's interests
+        available_interests = current_user.interests.all()
+        interest_list = [(i.id, i.name) for i in available_interests]
+        interest_list.append([len(available_interests), 'Recommended'])
+        interest_list.append([len(available_interests)+1, 'View All'])
+    else:
+        load_defaults(interest_list)
 
     # create sortform
     sort_form = SortForm()
@@ -65,16 +69,17 @@ def s_index():
     else:
         posts = Post.query.order_by(Post.id.desc())
     return render_template('student_home.html', posts = posts, form=sort_form)
-
-    # if request.method == 'POST':
-    #     if sort_form.validate_on_submit():
-    #         # pull list of posts
-    #         posts = get_posts(sort_form.sort_by.data)
-    #         form = SortForm()
-    #         return render_template('index.html', posts = posts, form=sort_form)
-    # if request.method == 'GET':
-    #     posts = Post.query.order_by(Post.id.desc())
-    #     return render_template('index.html', posts = posts, form=sort_form)
+'''
+    if request.method == 'POST':
+        if sort_form.validate_on_submit():
+            # pull list of posts
+            posts = get_posts(sort_form.sort_by.data)
+            form = SortForm()
+            return render_template('index.html', posts = posts, form=sort_form)
+    if request.method == 'GET':
+        posts = Post.query.order_by(Post.id.desc())
+        return render_template('index.html', posts = posts, form=sort_form)
+'''
 
 
 
@@ -123,6 +128,7 @@ def edit_profile(userid):
         return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
     return
 
+
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
 @login_required
 def f_edit_profile():
@@ -140,6 +146,7 @@ def f_edit_profile():
     else:
         pass
     return render_template('f_edit_profile.html', title='Edit Profile', form=eform)
+
 
 @bp_routes.route('/s_edit_profile', methods=['GET','POST'])
 @login_required
@@ -164,7 +171,6 @@ def s_edit_profile():
                 return redirect(url_for('routes.s_index'))
     elif (request.method == "GET"):
         # Populate DB with User data
-        
         if current_user.user_type == "Student":
             sform.phone_num.data = current_user.phone_num
             sform.major.data = current_user.major
@@ -177,6 +183,7 @@ def s_edit_profile():
     else:
         pass 
     return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
+
 
 @bp_routes.route('/createpost', methods=['GET','POST'])
 @login_required
@@ -191,6 +198,21 @@ def createpost():
         flash("Your post has been created.")
         return redirect(url_for('routes.f_index'))
     return render_template('createpost.html', title='Create Post', form=ppost)
+
+
+@bp_routes.route('/delete/<post_id>', methods=['DELETE', 'POST'])
+@login_required
+def delete(post_id):
+    post = Post.query.filter_by(id = post_id).first()
+    if post != None:
+        for interest in Post.interests:
+            Post.interests.remove(interest)
+        db.session.delete(post)
+        db.session.commit()
+    flash('Post deleted!')
+    # posts = Post.query.order_by(Post.id.desc())
+    return redirect(url_for('routes.f_index'))
+
 
 @bp_routes.route('/s_your_app', methods=['GET','POST'])
 @login_required
