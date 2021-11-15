@@ -31,7 +31,24 @@ def get_posts(selection):
 @login_required
 def f_index():
     posts = Post.query.order_by(Post.id.desc())
+    #posts = current_user.get_user_posts()
     return render_template('faculty_home.html', posts = posts)
+
+@bp_routes.route('/f_review', methods=['GET', 'POST'])
+@login_required
+def f_review():
+    posts = current_user.get_user_posts()
+    return render_template('faculty_home.html', posts = posts)
+
+@bp_routes.route('/applicants/<post_id>', methods=['GET'])
+@login_required
+def applicants(post_id):
+    thepost = Post.query.filter_by(id = post_id).first()
+    if thepost is None:
+        flash("Error")
+        return redirect(url_for('routes.f_review'))
+    students = thepost.get_students_applied()
+    return render_template('faculty_home.html', students = students)
 
 @bp_routes.route('/', methods=['GET', 'POST'])
 @bp_routes.route('/s_index', methods=['GET', 'POST'])

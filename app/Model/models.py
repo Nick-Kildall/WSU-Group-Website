@@ -45,6 +45,8 @@ class Post(db.Model):
     def __repr__(self):
         return '<ID: {} Title: {}>'.format(self.id,self.title)
 
+    def get_students_applied(self):
+        return self.students_applied
 
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -97,12 +99,16 @@ class User(db.Model,UserMixin):
 
 
 class Faculty(User):
+    posts = db.relationship('Post', backref = 'faculty', lazy = 'dynamic')
     __tablename__='faculty'
     id = db.Column(db.ForeignKey("user.id"), primary_key=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'Faculty'
     }
+
+    def get_user_posts(self):
+        return self.posts
 
 
 
