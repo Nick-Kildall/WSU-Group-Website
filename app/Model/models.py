@@ -30,6 +30,7 @@ class Post(db.Model):
     endDate = db.Column(db.String(64))
     startDate = db.Column(db.String(64))
     description = db.Column(db.String(2500))
+    faculty_id = db.Column(db.Integer,db.ForeignKey('user.id'))
     commitment = db.Column(db.Integer)
     qualifications = db.Column(db.String(2500))
     #applications = db.relationship('Application', back_populates = 'post', lazy = 'dynamic')
@@ -152,12 +153,11 @@ class Student(User):
    # student_applied = db.relationship('Student')
     #post_applied = db.relationship('Post')
     
-class Application(Student):
-    __tablename__='application'
-    student_id = db.Column(db.ForeignKey("student.id"), primary_key=True)
-    post = db.Column(db.Integer, db.ForeignKey('post.id'))
-    #student_id = db.Column(db.Integer)
-    #post_id = db.Column(db.Integer)
+class Application(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    student_id = db.Column(db.Integer)
+    post_id = db.Column(db.Integer)
+
     ### Form variables
     studentDescription = db.Column(db.String(2500))
     reference_name = db.Column(db.String(256))
@@ -169,6 +169,10 @@ class Application(Student):
     description = db.Column(db.String(2500))
     commitment = db.Column(db.Integer)
     qualifications = db.Column(db.String(2500))
+
+    firstname = db.Column(db.String(64))
+    lastname = db.Column(db.String(64))
+    username = db.Column(db.String(128))
     
     __mapper_args__ = {
         'polymorphic_identity': 'Application',
