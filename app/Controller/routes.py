@@ -198,7 +198,11 @@ def s_your_app():
 
     ### Query all applications to render
     studentApplications = Application.query.filter_by(student_id = current_user.id).all()
-
+    print("student Apps:")
+    print(studentApplications)
+    print(current_user.id)
+    for app in Application.query.filter_by(student_id = current_user.id).all():
+        print(app.student_id)
     return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
 
 @bp_routes.route('/apply/<postid>', methods=['GET','POST'])
@@ -216,14 +220,21 @@ def apply(postid):
         #print(current_user.applications)
         theApply = Apply.query.filter_by(post_id = postid).first()
         ### adds varibles from the post and application
-        theApplication = Application(student_id = theApply.student_id, studentDescription = applyForm.studentDescription.data, reference_name = applyForm.reference_name.data,
+        theApplication = Application(student_id = current_user.id, post_id = postid,
+            studentDescription = applyForm.studentDescription.data, reference_name = applyForm.reference_name.data,
             reference_email = applyForm.reference_email.data, title = thePost.title, endDate = thePost.endDate, 
             startDate = thePost.startDate, description = thePost.description, commitment = thePost.commitment,
-            qualifications = thePost.qualifications)
+            qualifications = thePost.qualifications, firstname = current_user.firstname, lastname = current_user.lastname,
+            username = current_user.username)
 
         db.session.add(theApplication)
         db.session.commit()
         print("pushed app")
+        print(Application.query.all())
+
+        allAppsForPost = Application.query.filter_by(post_id = postid).all()
+        for app in allAppsForPost:
+            print(app.firstname + app.lastname)
 
         return redirect(url_for("routes.s_index"))
    

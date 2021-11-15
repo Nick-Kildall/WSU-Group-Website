@@ -61,6 +61,22 @@
                     {% endif %}
                 {% endif %}
             </td>
+
+        </tr>
+        <tr>
+            <td colspan="3">
+                {% if current_user.user_type == 'Faculty' %}
+                    curr user id : {{ current_user.id }} - faculty id: {{ post.faculty_id }}
+                    {{ current_user.id == post.faculty_id }}
+                    {% if (current_user.id == post.faculty_id) %}
+                        <div style="margin-left: 75%; text-align: right;">
+                            <form action = "{{ url_for('routes.apply', postid = post.id) }}">
+                                <input type = 'submit', value = 'Delete', class = 'button'>
+                            </form>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </td>
         </tr>
     </td>
 
