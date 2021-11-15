@@ -12,11 +12,6 @@
         {% for post in posts %}
         <div class = 'post-box'>
             {% include '_post.html' %}
-
-        <form action="{{url_for('routes.applicants',post_id = post.id)}}" method="get">
-                <input type="submit" value="Applicants" >
-                </form>                                
-
         </div>
     </div>
     <div>

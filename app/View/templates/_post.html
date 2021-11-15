@@ -66,7 +66,7 @@
         <tr>
             <td colspan="3">
                 {% if current_user.user_type == 'Faculty' %}
-                    curr user id : {{ current_user.id }} - faculty id: {{ post.faculty_id }}
+
                     {{ current_user.id == post.faculty_id }}
                     {% if (current_user.id == post.faculty_id) %}
                         <div style="margin-left: 75%; text-align: right;">
@@ -74,6 +74,13 @@
                                 <input type = 'submit', value = 'Delete', class = 'button'>
                             </form>
                         </div>
+
+                        <div style="margin-left: 75%; text-align: right;"></div>
+                        <form action="{{url_for('routes.applicants',post_id = post.id)}}" method="get">
+                            <input type="submit" value="Applicants", class = 'button' >
+                            </form>  
+                        </div>                              
+            
                     {% endif %}
                 {% endif %}
             </td>
