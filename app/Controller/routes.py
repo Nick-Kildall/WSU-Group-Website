@@ -42,6 +42,7 @@ def get_posts(selection):
 
 
 @bp_routes.route('/', methods=['GET', 'POST'])
+@bp_routes.route('/index', methods=['GET', 'POST'])
 def index():
     if (current_user.is_authenticated):
         if (current_user.user_type == 'Student'):
