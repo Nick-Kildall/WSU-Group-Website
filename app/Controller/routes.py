@@ -272,7 +272,7 @@ def withdraw(post_id):
         return redirect(url_for("routes.s_index"))
     else:
         flash('No pending application to posting found')
-    return
+        return redirect(url_for("routes.s_index"))
 
 @bp_routes.route('/allposts', methods=['GET', 'POST'])
 @login_required
