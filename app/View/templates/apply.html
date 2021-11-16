@@ -16,6 +16,7 @@
                 {% for error in form.studentDescription.errors %} 
                 <span style = "color: red;">[ {{error}} ]</span>
                 {% endfor %} 
+                <br>
 
                 {{ form.reference_name.label }}<br>
                 {{ form.reference_name(class="forminput") }}<br>
@@ -23,16 +24,17 @@
                 {% for error in form.reference_name.errors %} 
                 <span style = "color: red;">[ {{error}} ]</span>
                 {% endfor %} 
-
+                <br>
                 {{ form.reference_email.label }}<br>
                 {{ form.reference_email(class="forminput") }}<br>
 
                 {% for error in form.reference_email.errors %} 
                 <span style = "color: red;">[ {{error}} ]</span>
                 {% endfor %} 
-                
+                <br>
                 {{ form.submit(class="button") }}
-
+            </div>
+        </form>
     {% endif %}
 
 {% endblock %}

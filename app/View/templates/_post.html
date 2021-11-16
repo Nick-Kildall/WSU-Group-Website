@@ -38,14 +38,17 @@
     <tr>
         <td>
             {% if current_user.user_type == 'Faculty' %}
+            {% if current_user.id == post.faculty_id %}
+            <div style="margin-left: 75%; text-align: right;">
             <form action = "{{ url_for('routes.delete', post_id = post.id) }}" method = "post">
-                <input type = "submit" value = "Delete">
+                <input type = "submit" value = "Delete", class = 'button'>
             </form>
             <form action = "{{ url_for('routes.applicants', post_id = post.id) }}" method = "get">
-                <input type = "submit" value = "Applicants">
+                <input type = "submit" value = "Applicants", class = 'button'>
             </form>
-
-            {% endif %}
+        </div>
+        {% endif %}
+        {% endif %}
         </td>
     </tr>
 </table>

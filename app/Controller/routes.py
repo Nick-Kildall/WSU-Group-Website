@@ -146,8 +146,8 @@ def createpost():
 def delete(post_id):
     post = Post.query.filter_by(id = post_id).first()
     if post != None:
-        for interest in Post.interests:
-            Post.interests.remove(interest)
+        for interest in post.interests:
+            post.interests.remove(interest)
         db.session.delete(post)
         db.session.commit()
     flash('Post deleted!')
@@ -198,7 +198,7 @@ def apply(postid):
             startDate = thePost.startDate, description = thePost.description, commitment = thePost.commitment,
             qualifications = thePost.qualifications, firstname = current_user.firstname, lastname = current_user.lastname,
             username = current_user.username)
-
+    
         db.session.add(theApplication)
         db.session.commit()
         print("HEY THIS SORT OF DEFINITELY WORKED")
