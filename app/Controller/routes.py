@@ -1,4 +1,5 @@
 from __future__ import print_function
+from re import L
 import sys
 from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
@@ -6,6 +7,7 @@ from flask_login import  current_user, login_required
 from flask_wtf.recaptcha.widgets import RecaptchaWidget
 from app.Model.models import Faculty, Student, Post, User, Apply, Application
 from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm, ApplicationForm
+from app.Controller.auth_forms import LoginForm
 from config import Config
 
 from app import db
@@ -39,13 +41,26 @@ def get_posts(selection):
         print(selection)
         return Post.query.filter(Post.interests.any(name = selection)).all()
 
+
+@bp_routes.route('/', methods=['GET', 'POST'])
+def index():
+    if (current_user.is_authenticated):
+        if (current_user.user_type == 'Student'):
+            return redirect(url_for('routes.s_index'))
+        elif (current_user.user_type == 'Faculty'):
+            return redirect(url_for('routes.f_index'))
+    else:
+        lform = LoginForm()
+        return render_template('login.html', form = lform)
+
+
 @bp_routes.route('/f_index', methods=['GET', 'POST'])
 @login_required
 def f_index():
     posts = Post.query.order_by(Post.id.desc())
     return render_template('faculty_home.html', posts = posts)
 
-@bp_routes.route('/', methods=['GET', 'POST'])
+
 @bp_routes.route('/s_index', methods=['GET', 'POST'])
 @login_required
 def s_index():
@@ -200,13 +215,13 @@ def createpost():
     return render_template('createpost.html', title='Create Post', form=ppost)
 
 
-@bp_routes.route('/delete/<post_id>', methods=['DELETE', 'POST'])
+@bp_routes.route('/delete/<postid>', methods=['GET', 'POST'])
 @login_required
-def delete(post_id):
-    post = Post.query.filter_by(id = post_id).first()
+def delete(postid):
+    post = Post.query.filter_by(id = postid).first()
     if post != None:
-        for interest in Post.interests:
-            Post.interests.remove(interest)
+        #for interest in Post.interests:
+        #    Post.interests.remove(interest)
         db.session.delete(post)
         db.session.commit()
     flash('Post deleted!')

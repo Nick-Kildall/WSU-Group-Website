@@ -28,14 +28,14 @@ class Post(db.Model):
     endDate = db.Column(db.String(64))
     startDate = db.Column(db.String(64))
     description = db.Column(db.String(2500))
-    faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
+    faculty_id = db.Column(db.Integer,db.ForeignKey('user.id'))
     commitment = db.Column(db.Integer)
     qualifications = db.Column(db.String(2500))
     students_applied = db.relationship("Apply", back_populates = "post_applied")
     interests = db.relationship('Interest',
         secondary = postInterests,
+        back_populates = 'posts', 
         primaryjoin=(postInterests.c.post_id == id), 
-        backref=db.backref('postInterests', lazy='dynamic'), 
         lazy='dynamic')
 
     def get_interests(self):
@@ -52,18 +52,17 @@ class Interest(db.Model):
     posts = db.relationship("Post",
         secondary = postInterests,
         primaryjoin=(postInterests.c.interest_id == id),
-        backref=db.backref('postInterests',
-        lazy='dynamic'),
-        lazy='dynamic')
+        lazy='joined')
+        # changing lazy from 'dynamic' to 'joined'
     users = db.relationship('User',
         secondary = studentInterests,
         primaryjoin=(studentInterests.c.interest_id == id),
-        backref=db.backref('studentInterests',
-        lazy='dynamic'),
-        lazy='dynamic')
+        lazy='joined')
+        # changing lazy from 'dynamic' to 'joined'
 
     def __repr__(self):
         return '<ID: {} Name: {}>'.format(self.id,self.name)
+
 
 class User(db.Model,UserMixin):
     __tablename__='user'
@@ -95,16 +94,6 @@ class User(db.Model,UserMixin):
         return "User %s" % self.name
 
 
-class Faculty(User):
-    __tablename__='faculty'
-    id = db.Column(db.ForeignKey("user.id"), primary_key=True)
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'Faculty'
-    }
-
-
-
 class Student(User):
     __tablename__='student'
     id = db.Column(db.ForeignKey("user.id"), primary_key=True)
@@ -117,9 +106,8 @@ class Student(User):
     applications = db.relationship("Apply", back_populates = "student_applied")
     interests = db.relationship("Interest",
         secondary = studentInterests,
+        back_populates = 'users', 
         primaryjoin=(studentInterests.c.user_id == id),
-        backref=db.backref('studentInterests',
-        lazy='dynamic'),
         lazy='dynamic')
     __mapper_args__ = {
         'polymorphic_identity': 'Student',
@@ -136,6 +124,16 @@ class Student(User):
     
     def is_applied(self, thePost):
         return (Apply.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).count() > 0)
+
+
+class Faculty(User):
+    __tablename__='faculty'
+    id = db.Column(db.ForeignKey("user.id"), primary_key=True)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'Faculty'
+    }
+
 
 class Apply(db.Model):
     ### Relationships
