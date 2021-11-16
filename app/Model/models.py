@@ -34,8 +34,8 @@ class Post(db.Model):
     students_applied = db.relationship("Apply", back_populates = "post_applied")
     interests = db.relationship('Interest',
         secondary = postInterests,
-        back_populates = 'posts', 
         primaryjoin=(postInterests.c.post_id == id), 
+        backref=db.backref('postInterests', lazy='dynamic'), 
         lazy='dynamic')
 
     def get_interests(self):
@@ -54,17 +54,18 @@ class Interest(db.Model):
     posts = db.relationship("Post",
         secondary = postInterests,
         primaryjoin=(postInterests.c.interest_id == id),
-        lazy='joined')
-        # changing lazy from 'dynamic' to 'joined'
+        backref=db.backref('postInterests',
+        lazy='dynamic'),
+        lazy='dynamic')
     users = db.relationship('User',
         secondary = studentInterests,
         primaryjoin=(studentInterests.c.interest_id == id),
-        lazy='joined')
-        # changing lazy from 'dynamic' to 'joined'
+        backref=db.backref('studentInterests',
+        lazy='dynamic'),
+        lazy='dynamic')
 
     def __repr__(self):
         return '<ID: {} Name: {}>'.format(self.id,self.name)
-
 
 class User(db.Model,UserMixin):
     __tablename__='user'
@@ -119,8 +120,9 @@ class Student(User):
     applications = db.relationship("Apply", back_populates = "student_applied")
     interests = db.relationship("Interest",
         secondary = studentInterests,
-        back_populates = 'users', 
         primaryjoin=(studentInterests.c.user_id == id),
+        backref=db.backref('studentInterests',
+        lazy='dynamic'),
         lazy='dynamic')
     __mapper_args__ = {
         'polymorphic_identity': 'Student',
@@ -138,7 +140,6 @@ class Student(User):
     def is_applied(self, thePost):
         return (Apply.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).count() > 0)
 
-
 class Apply(db.Model):
     ### Relationships
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key = True)
@@ -146,7 +147,6 @@ class Apply(db.Model):
     student_applied = db.relationship('Student')
     post_applied = db.relationship('Post')
     
-
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     student_id = db.Column(db.Integer)
@@ -171,4 +171,9 @@ class Application(db.Model):
     
     def __repr__(self):
         return '<Application class: id {} - title: {}>'.format(self.id, self.title)
+
+
+
+
+
 

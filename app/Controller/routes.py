@@ -1,5 +1,4 @@
 from __future__ import print_function
-from re import L
 import sys
 from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
@@ -7,25 +6,12 @@ from flask_login import  current_user, login_required
 from flask_wtf.recaptcha.widgets import RecaptchaWidget
 from app.Model.models import Faculty, Student, Post, User, Application,Apply
 from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm, ApplicationForm
-from app.Controller.auth_forms import LoginForm
 from config import Config
 
 from app import db
 
 bp_routes = Blueprint('routes', __name__)
 bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
-
-def load_defaults(_list):
-    interests = ["Artificial Intelligence/Machine Learning", "Front End Development", "Back End Develoipment",
-        "Data Science", "Software Engineering", "Web Development", "Full Stack", "Mobile Application", "Game Development",
-        "Cybersecurity"]
-    i = 0
-    for interest in interests:
-        _list.append([i, interest])
-        i += 1
-    _list.append([i+1, "Recommended"])
-    _list.append([i+1, "View All"])
-    return
 
 def get_posts(selection):
     if selection == 'Recommended':
@@ -40,27 +26,15 @@ def get_posts(selection):
         print(selection)
         return Post.query.filter(Post.interests.any(name = selection)).all()
 
-
-@bp_routes.route('/', methods=['GET', 'POST'])
-@bp_routes.route('/index', methods=['GET', 'POST'])
-def index():
-    if (current_user.is_authenticated):
-        if (current_user.user_type == 'Student'):
-            return redirect(url_for('routes.s_index'))
-        elif (current_user.user_type == 'Faculty'):
-            return redirect(url_for('routes.f_index'))
-    else:
-        lform = LoginForm()
-        return render_template('login.html', form = lform)
-
-
+#all_posts is used to reuse faculty home to display all posts 
+#all_posts == 0 implies you are viewing just the faculty's posts 
 @bp_routes.route('/f_index', methods=['GET', 'POST'])
 @login_required
 def f_index():
     posts = current_user.get_user_posts()
     return render_template('faculty_home.html', posts = posts,all_posts = 0)
 
-
+@bp_routes.route('/', methods=['GET', 'POST'])
 @bp_routes.route('/s_index', methods=['GET', 'POST'])
 @login_required
 def s_index():
@@ -95,20 +69,6 @@ def s_index():
         posts = Post.query.order_by(Post.id.desc())
         return render_template('index.html', posts = posts, form=sort_form)
 '''
-
-
-
-@bp_routes.route('/<userid>/edit_profile', methods=['GET', 'POST'])
-@login_required
-def edit_profile(userid):
-    if current_user.account_type == 0:  # faculty edit pages
-        eform=FacultyEditForm()
-        return render_template('f_edit_profile.html', title='Edit Profile', form=eform)
-    else:
-        sform = StudentEditForm()
-        return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
-    return
-
 
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
 @login_required
@@ -181,13 +141,13 @@ def createpost():
     return render_template('createpost.html', title='Create Post', form=ppost)
 
 
-@bp_routes.route('/delete/<post_id>', methods=['GET', 'POST'])
+@bp_routes.route('/delete/<post_id>', methods=['DELETE', 'POST'])
 @login_required
 def delete(post_id):
     post = Post.query.filter_by(id = post_id).first()
     if post != None:
-        #for interest in Post.interests:
-        #    Post.interests.remove(interest)
+        for interest in post.interests:
+            post.interests.remove(interest)
         db.session.delete(post)
         db.session.commit()
     flash('Post deleted!')
@@ -208,8 +168,6 @@ def s_your_app():
         print(app.student_id)
     return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
 
-
-
 @bp_routes.route('/applicants/<post_id>', methods=['GET'])
 @login_required
 def applicants(post_id):
@@ -219,7 +177,6 @@ def applicants(post_id):
         return redirect(url_for('routes.faculty_home'))
     studentApplications = Application.query.filter_by(post_id = post_id).all()
     return render_template('post_student_list.html', studentApplications = studentApplications)
-
 
 @bp_routes.route('/apply/<postid>', methods=['GET','POST'])
 def apply(postid): 
@@ -257,23 +214,6 @@ def apply(postid):
     # sends student to application form
     return render_template('apply.html', title='Apply to Research Oppertunity', form=applyForm)
 
-    #     current_user.apply(postid, newApplication)
-    #     flash("You successfully applied")
-    #     return redirect(url_for("routes.index"))
-    #return render_template('apply.html', title = 'Apply', form = applyform)
-
-
-@bp_routes.route('/withdraw/<post_id>', methods=['GET','POST'])
-def withdraw(post_id):
-    _post = Post.query.filter_by(id = post_id).first()
-    if current_user.is_applied(_post):
-        _application = Application.query.filter_by(id = post_id, student_id = current_user.id).first()
-        db.session.remove(_application)
-        db.session.commit()
-        return redirect(url_for("routes.s_index"))
-    else:
-        flash('No pending application to posting found')
-        return redirect(url_for("routes.s_index"))
 
 @bp_routes.route('/allposts', methods=['GET', 'POST'])
 @login_required
