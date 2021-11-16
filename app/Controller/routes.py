@@ -158,14 +158,8 @@ def delete(post_id):
 @bp_routes.route('/s_your_app', methods=['GET','POST'])
 @login_required
 def s_your_app():
-
     ### Query all applications to render
     studentApplications = Application.query.filter_by(student_id = current_user.id).all()
-    print("student Apps:")
-    print(studentApplications)
-    print(current_user.id)
-    for app in Application.query.filter_by(student_id = current_user.id).all():
-        print(app.student_id)
     return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
 
 @bp_routes.route('/applicants/<post_id>', methods=['GET'])
@@ -201,19 +195,17 @@ def apply(postid):
     
         db.session.add(theApplication)
         db.session.commit()
-        print("HEY THIS SORT OF DEFINITELY WORKED")
-        print("pushed app")
-        print(Application.query.all())
-
-        allAppsForPost = Application.query.filter_by(post_id = postid).all()
-        for app in allAppsForPost:
-            print(app.firstname + app.lastname)
 
         return redirect(url_for("routes.s_index"))
    
     # sends student to application form
     return render_template('apply.html', title='Apply to Research Oppertunity', form=applyForm)
 
+@bp_routes.route('/withdraw/<post_id>', methods=['GET','POST'])
+def withdraw(post_id):
+    thePost = Post.query.filter_by(id = post_id).first()
+    current_user.withdraw(thePost)
+    return redirect(url_for("routes.s_index"))
 
 @bp_routes.route('/allposts', methods=['GET', 'POST'])
 @login_required
