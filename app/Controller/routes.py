@@ -103,43 +103,9 @@ def s_index():
 def edit_profile(userid):
     if current_user.account_type == 0:  # faculty edit pages
         eform=FacultyEditForm()
-        # if request.method=='POST':
-        #     if eform.validate_on_submit():
-        #         current_user.phone_num=eform.phone_num.data
-        #         current_user.set_password(eform.password.data)
-        #         db.session.add(current_user)
-        #         db.session.commit()
-        #         flash("Your changes have been saved")
-        #         return render_template(url_for('routes.index'))
         return render_template('f_edit_profile.html', title='Edit Profile', form=eform)
     else:
         sform = StudentEditForm()
-        # if request.method=='POST':
-        #     if sform.validate_on_submit():
-        #         current_user.phone_num = sform.phone_num.data
-        #         current_user.set_password(sform.password.data) 
-        #         current_user.major = sform.major.data
-        #         current_user.gpa = sform.gpa.data
-        #         current_user.grad_date = sform.grad_date.data
-        #         current_user.tech_electives = sform.tech_electives.data
-        #         current_user.languages = sform.languages.data
-        #         current_user.prior_exp = sform.prior_exp.data
-        #         db.session.add(current_user)
-        #         db.session.commit()
-        #         flash("Your changes have been saved")
-        #         return render_template(url_for('routes.index'))
-        # elif (request.method == "GET"):
-        #     # Populate DB with User data
-        #     sform.phone_num.data = current_user.phone_num
-        #     sform.major.data = current_user.major
-        #     sform.gpa.data = current_user.gpa
-        #     sform.grad_date.data = current_user.grad_date
-        #     sform.tech_electives.data = current_user.tech_electives
-        #     sform.languages.data = current_user.languages
-        #     sform.prior_exp.data = current_user.prior_exp
-        #     sform.interest.data = current_user.interest
-        # else:
-        #     pass 
         return render_template('s_edit_profile.html', title='Edit Profile', form=sform)
     return
 
@@ -215,10 +181,10 @@ def createpost():
     return render_template('createpost.html', title='Create Post', form=ppost)
 
 
-@bp_routes.route('/delete/<postid>', methods=['GET', 'POST'])
+@bp_routes.route('/delete/<post_id>', methods=['GET', 'POST'])
 @login_required
-def delete(postid):
-    post = Post.query.filter_by(id = postid).first()
+def delete(post_id):
+    post = Post.query.filter_by(id = post_id).first()
     if post != None:
         #for interest in Post.interests:
         #    Post.interests.remove(interest)
@@ -237,6 +203,18 @@ def s_your_app():
     studentApplications = Application.query.filter_by(student_id = current_user.id).all()
 
     return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
+
+
+@bp_routes.route('/applicants/<post_id>', methods=['GET'])
+@login_required
+def applicants(post_id):
+    thepost = Post.query.filter_by(id = post_id).first()
+    if thepost is None:
+        flash("Error")
+        return redirect(url_for('routes.faculty_home'))
+    studentApplications = Application.query.filter_by(post_id = post_id).all()
+    return render_template('post_student_list.html', studentApplications = studentApplications)
+
 
 @bp_routes.route('/apply/<postid>', methods=['GET','POST'])
 def apply(postid):
@@ -266,9 +244,21 @@ def apply(postid):
    
     # sends student to application form
     return render_template('apply.html', title='Apply to Research Oppertunity', form=applyForm)
-            
-    #     
+
     #     current_user.apply(postid, newApplication)
     #     flash("You successfully applied")
     #     return redirect(url_for("routes.index"))
     #return render_template('apply.html', title = 'Apply', form = applyform)
+
+
+@bp_routes.route('/withdraw/<post_id>', methods=['GET','POST'])
+def withdraw(post_id):
+    _post = Post.query.filter_by(id = post_id).first()
+    if current_user.is_applied(_post):
+        _application = Application.query.filter_by(id = post_id, student_id = current_user.id).first()
+        db.session.remove(_application)
+        db.session.commit()
+        return redirect(url_for("routes.s_index"))
+    else:
+        flash('No pending application to posting found')
+    return

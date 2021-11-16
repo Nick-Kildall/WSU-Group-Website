@@ -142,6 +142,7 @@ class Apply(db.Model):
     student_applied = db.relationship('Student')
     post_applied = db.relationship('Post')
     
+
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     student_id = db.Column(db.Integer)
@@ -161,6 +162,7 @@ class Application(db.Model):
     
     def __repr__(self):
         return '<Application class: id {} - title: {}>'.format(self.id, self.title)
+
 
 ### student_id not null integrity error
 # class Apply(db.Model):
