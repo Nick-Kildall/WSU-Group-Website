@@ -2,13 +2,13 @@
 
 {% block content %}
 
-    <h1>Your Applications</h1>
-    <div class = 'postlist'>
+<h1>Applicants</h1>
+<div class = 'postlist'>
     {% for application in studentApplications %}
         <div class = 'post-box'>
             {% include '_application.html' %}
         </div>
     {% endfor %}
-    </div>
+</div>
 
 {% endblock %}

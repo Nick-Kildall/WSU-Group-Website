@@ -38,7 +38,7 @@
             {% endif %}
             {% if current_user.user_type == 'Student' %}
                 <div style="margin-left: 75%; text-align: right;">
-                <form action = "{{ url_for('routes.delete', post_id = post.id) }}" method = "post">
+                <form action = "{{ url_for('routes.withdraw', post_id = post.id) }}" method = "post">
                     <input type = "submit" value = "Withdraw", class = 'button'>
                 </form>
             {% endif %}

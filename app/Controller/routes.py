@@ -5,7 +5,7 @@ from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import  current_user, login_required
 from flask_wtf.recaptcha.widgets import RecaptchaWidget
-from app.Model.models import Faculty, Student, Post, User, Apply, Application
+from app.Model.models import Faculty, Student, Post, User, Application,Apply
 from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm, ApplicationForm
 from app.Controller.auth_forms import LoginForm
 from config import Config
@@ -14,7 +14,6 @@ from app import db
 
 bp_routes = Blueprint('routes', __name__)
 bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
-
 
 def load_defaults(_list):
     interests = ["Artificial Intelligence/Machine Learning", "Front End Development", "Back End Develoipment",
@@ -57,8 +56,8 @@ def index():
 @bp_routes.route('/f_index', methods=['GET', 'POST'])
 @login_required
 def f_index():
-    posts = Post.query.order_by(Post.id.desc())
-    return render_template('faculty_home.html', posts = posts)
+    posts = current_user.get_user_posts()
+    return render_template('faculty_home.html', posts = posts,all_posts = 0)
 
 
 @bp_routes.route('/s_index', methods=['GET', 'POST'])
@@ -201,8 +200,13 @@ def s_your_app():
 
     ### Query all applications to render
     studentApplications = Application.query.filter_by(student_id = current_user.id).all()
-
+    print("student Apps:")
+    print(studentApplications)
+    print(current_user.id)
+    for app in Application.query.filter_by(student_id = current_user.id).all():
+        print(app.student_id)
     return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
+
 
 
 @bp_routes.route('/applicants/<post_id>', methods=['GET'])
@@ -217,7 +221,7 @@ def applicants(post_id):
 
 
 @bp_routes.route('/apply/<postid>', methods=['GET','POST'])
-def apply(postid):
+def apply(postid): 
     applyForm = ApplicationForm()
     # Applies student to postition
     if applyForm.validate_on_submit(): 
@@ -225,20 +229,27 @@ def apply(postid):
         if thePost is None:
             flash("Post with id '{}' not found").format(postid)
             return redirect(url_for("routes.s_index"))
-        
         ### creates many-to-many relationship
         current_user.apply(thePost)
         #print(current_user.applications)
         theApply = Apply.query.filter_by(post_id = postid).first()
         ### adds varibles from the post and application
-        theApplication = Application(student_id = theApply.student_id, studentDescription = applyForm.studentDescription.data, reference_name = applyForm.reference_name.data,
+        theApplication = Application(student_id = current_user.id, post_id = postid,
+            studentDescription = applyForm.studentDescription.data, reference_name = applyForm.reference_name.data,
             reference_email = applyForm.reference_email.data, title = thePost.title, endDate = thePost.endDate, 
             startDate = thePost.startDate, description = thePost.description, commitment = thePost.commitment,
-            qualifications = thePost.qualifications)
-
+            qualifications = thePost.qualifications, firstname = current_user.firstname, lastname = current_user.lastname,
+            username = current_user.username)
+    
         db.session.add(theApplication)
         db.session.commit()
+        print("HEY THIS SORT OF DEFINITELY WORKED")
         print("pushed app")
+        print(Application.query.all())
+
+        allAppsForPost = Application.query.filter_by(post_id = postid).all()
+        for app in allAppsForPost:
+            print(app.firstname + app.lastname)
 
         return redirect(url_for("routes.s_index"))
    
@@ -262,3 +273,11 @@ def withdraw(post_id):
     else:
         flash('No pending application to posting found')
     return
+
+@bp_routes.route('/allposts', methods=['GET', 'POST'])
+@login_required
+def allposts():
+    posts = Post.query.order_by(Post.id.desc())
+    return render_template('faculty_home.html', posts = posts,all_posts = 1)
+
+

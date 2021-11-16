@@ -9,8 +9,7 @@ from app import login
 @login.user_loader  
 def load_user(id):
     return User.query.get(int(id))
-    
-
+     
 studentInterests = db.Table('studentInterests',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'))
@@ -24,6 +23,7 @@ postInterests = db.Table('postInterests',
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
     title = db.Column(db.String(150))
     endDate = db.Column(db.String(64))
     startDate = db.Column(db.String(64))
@@ -44,6 +44,8 @@ class Post(db.Model):
     def __repr__(self):
         return '<ID: {} Title: {}>'.format(self.id,self.title)
 
+    def get_students_applied(self):
+        return self.students_applied
 
 class Interest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -80,10 +82,7 @@ class User(db.Model,UserMixin):
         'polymorphic_identity': 'users',
         'polymorphic_on':user_type
     }
-    
-    def __repr__(self):
-        return '<ID: {} Username: {}>'.format(self.id,self.username)
-    
+        
     def set_password(self,password):
         self.password_hash=generate_password_hash(password)
     
@@ -92,6 +91,20 @@ class User(db.Model,UserMixin):
    
     def __repr__(self):
         return "User %s" % self.name
+
+
+class Faculty(User):
+    posts = db.relationship('Post', backref = 'faculty', lazy = 'dynamic')
+    __tablename__='faculty'
+    id = db.Column(db.ForeignKey("user.id"), primary_key=True)
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'Faculty'
+    }
+
+    def get_user_posts(self):
+        return self.posts
+
 
 
 class Student(User):
@@ -126,15 +139,6 @@ class Student(User):
         return (Apply.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).count() > 0)
 
 
-class Faculty(User):
-    __tablename__='faculty'
-    id = db.Column(db.ForeignKey("user.id"), primary_key=True)
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'Faculty'
-    }
-
-
 class Apply(db.Model):
     ### Relationships
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key = True)
@@ -146,6 +150,7 @@ class Apply(db.Model):
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     student_id = db.Column(db.Integer)
+    post_id = db.Column(db.Integer)
 
     ### Form variables
     studentDescription = db.Column(db.String(2500))
@@ -159,62 +164,11 @@ class Application(db.Model):
     description = db.Column(db.String(2500))
     commitment = db.Column(db.Integer)
     qualifications = db.Column(db.String(2500))
+
+    firstname = db.Column(db.String(64))
+    lastname = db.Column(db.String(64))
+    username = db.Column(db.String(128))
     
     def __repr__(self):
         return '<Application class: id {} - title: {}>'.format(self.id, self.title)
-
-
-### student_id not null integrity error
-# class Apply(db.Model):
-#     ### Relationships
-#     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key = True)
-#     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key = True)
-#     student_applied = db.relationship('Student')
-#     post_applied = db.relationship('Post')
-    
-#     ### Form variables
-#     studentDescription = db.Column(db.String(2500))
-#     reference_name = db.Column(db.String(256))
-#     reference_email = db.Column(db.String(256))
-
-#     ### Fill relevant post details
-#     title = db.Column(db.String(150))
-#     endDate = db.Column(db.String(64))
-#     startDate = db.Column(db.String(64))
-#     description = db.Column(db.String(2500))
-#     commitment = db.Column(db.Integer)
-#     qualifications = db.Column(db.String(2500))
-    
-#     def __repr__(self):
-#         return '<Apply class: student_id {} - post_id: {} - id: {}>'.format(self.student_id,self.post_id)
-
-
-#### doesn't fill values once session commits. Useless
-# class Apply(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-
-#     ### Relationships
-#     student_id = db.Column(db.Integer, db.ForeignKey('student.id'))
-#     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
-#     student_applied = db.relationship('Student')
-#     post_applied = db.relationship('Post')
-    
-#     ### Form variables
-#     studentDescription = db.Column(db.String(2500))
-#     reference_name = db.Column(db.String(256))
-#     reference_email = db.Column(db.String(256))
-
-#     ### Fill relevant post details
-#     title = db.Column(db.String(150))
-#     endDate = db.Column(db.String(64))
-#     startDate = db.Column(db.String(64))
-#     description = db.Column(db.String(2500))
-#     commitment = db.Column(db.Integer)
-#     qualifications = db.Column(db.String(2500))
-    
-#     def __repr__(self):
-#         return '<Apply class: student_id {} - post_id: {} - id: {}>'.format(self.student_id,self.post_id, self.id)
-
-
-
 

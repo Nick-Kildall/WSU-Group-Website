@@ -4,14 +4,32 @@
 
     <h1>Welcome to Research Connect!</h1>
     <h2>Hello, {{ current_user.firstname }} {{ current_user.lastname }}</h2>
-
+    
+    {%if all_posts == 0%}
+    <h2>Your Research Openings</h2>
+    
+  
     <div class = 'postlist'>
-    {% for post in posts %}
+        {% for post in posts %}
         <div class = 'post-box'>
             {% include '_post.html' %}
         </div>
-    {% endfor %}
+        {% endfor %}
     </div>
+    {%endif%}
+
+    {% if all_posts == 1%}
+    <h2>All Research Openings</h2>
+
+    <div class = 'postlist'>
+        {% for post in posts %}
+        <div class = 'post-box'>
+            {% include '_post.html' %}
+        </div>
+        {% endfor %}
+    </div>
+    {%endif%}
+  
     
 
 {% endblock %}
