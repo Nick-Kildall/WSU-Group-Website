@@ -14,16 +14,15 @@ bp_routes = Blueprint('routes', __name__)
 bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
 
 def get_posts(selection):
-    if selection == 'Recommended':
-        available_interests = current_user.interests.query.all()
+    if selection == "Recommended": #recommended
+        posts = []
+        available_interests = current_user.interests
         for interest in available_interests:
-            posts = []
-            posts.append(Post.query.filter_by(interest).first())
+            posts.append(Post.query.filter_by(current_user.interests.contains(interest)).first())
         return posts
-    elif selection == 'View All':
-        return Post.query.order_by(Post.id.desc())
-    else:
-        print(selection)
+    elif selection == "View All": # view
+        return Post.query.order_by(Post.id.desc()).all()
+    else: # filter by specific interest
         return Post.query.filter(Post.interests.any(name = selection)).all()
 
 #all_posts is used to reuse faculty home to display all posts 
@@ -42,9 +41,11 @@ def s_index():
     if (current_user.is_authenticated):
         # pull current user's interests
         available_interests = current_user.interests.all()
-        interest_list = [(i.id, i.name) for i in available_interests]
-        interest_list.append([len(available_interests), 'Recommended'])
-        interest_list.append([len(available_interests)+1, 'View All'])
+        interest_list = [(i.name) for i in available_interests]
+        interest_list.append('Recommended')
+        interest_list.append('View All')
+        print(available_interests)
+        
     else:
         load_defaults(interest_list)
 
@@ -52,23 +53,26 @@ def s_index():
     sort_form = SortForm()
     # pass current user's interests to sortform
     sort_form.sort_by.choices = interest_list
+
     if sort_form.validate_on_submit():
-            posts = get_posts(sort_form.sort_by.data)
-            form = SortForm()
+        print("selection : " + str(sort_form.sort_by.data))
+        posts = get_posts(sort_form.sort_by.data)
     else:
         posts = Post.query.order_by(Post.id.desc())
+    print(posts)
     return render_template('student_home.html', posts = posts, form=sort_form)
-'''
-    if request.method == 'POST':
-        if sort_form.validate_on_submit():
-            # pull list of posts
-            posts = get_posts(sort_form.sort_by.data)
-            form = SortForm()
-            return render_template('index.html', posts = posts, form=sort_form)
-    if request.method == 'GET':
-        posts = Post.query.order_by(Post.id.desc())
-        return render_template('index.html', posts = posts, form=sort_form)
-'''
+
+# '''
+#     if request.method == 'POST':
+#         if sort_form.validate_on_submit():
+#             # pull list of posts
+#             posts = get_posts(sort_form.sort_by.data)
+#             form = SortForm()
+#             return render_template('index.html', posts = posts, form=sort_form)
+#     if request.method == 'GET':
+#         posts = Post.query.order_by(Post.id.desc())
+#         return render_template('index.html', posts = posts, form=sort_form)
+# '''
 
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
 @login_required
@@ -158,14 +162,8 @@ def delete(post_id):
 @bp_routes.route('/s_your_app', methods=['GET','POST'])
 @login_required
 def s_your_app():
-
     ### Query all applications to render
     studentApplications = Application.query.filter_by(student_id = current_user.id).all()
-    print("student Apps:")
-    print(studentApplications)
-    print(current_user.id)
-    for app in Application.query.filter_by(student_id = current_user.id).all():
-        print(app.student_id)
     return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
 
 @bp_routes.route('/applicants/<post_id>', methods=['GET'])
@@ -201,19 +199,17 @@ def apply(postid):
     
         db.session.add(theApplication)
         db.session.commit()
-        print("HEY THIS SORT OF DEFINITELY WORKED")
-        print("pushed app")
-        print(Application.query.all())
-
-        allAppsForPost = Application.query.filter_by(post_id = postid).all()
-        for app in allAppsForPost:
-            print(app.firstname + app.lastname)
 
         return redirect(url_for("routes.s_index"))
    
     # sends student to application form
     return render_template('apply.html', title='Apply to Research Oppertunity', form=applyForm)
 
+@bp_routes.route('/withdraw/<post_id>', methods=['GET','POST'])
+def withdraw(post_id):
+    thePost = Post.query.filter_by(id = post_id).first()
+    current_user.withdraw(thePost)
+    return redirect(url_for("routes.s_index"))
 
 @bp_routes.route('/allposts', methods=['GET', 'POST'])
 @login_required

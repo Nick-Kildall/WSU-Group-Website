@@ -38,7 +38,7 @@ class StudentEditForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class SortForm(FlaskForm):
-    sort_by = SelectField('Filter By', coerce=int, validators=[InputRequired()])
+    sort_by = SelectField('Filter By', validators=[InputRequired()])
     submit = SubmitField('Submit')
 
 class PostForm(FlaskForm):
