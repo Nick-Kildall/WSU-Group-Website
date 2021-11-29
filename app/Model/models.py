@@ -11,19 +11,23 @@ def load_user(id):
     return User.query.get(int(id))
     
 
-studentInterests = db.Table('studentInterests',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'))
-)
+class Association(db.Model):
+    __tablename__ = 'associations'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    interest_id = db.Column(db.Integer, db.ForeignKey('interest.id'), nullable=False)
 
-postInterests = db.Table('postInterests',
-    db.Column('post_id', db.Integer, db.ForeignKey('post.id')),
-    db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'))
-)
+    __table_args__ = (db.UniqueConstraint('user_id', 'post_id', 'interest_id'), )
+
+    user = db.relationship("User")
+    post = db.relationship("Post", back_populates = 'associations')
+    interest = db.relationship("Interest", back_populates = 'associations')
 
 
 class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'post'
+    id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(150))
     endDate = db.Column(db.String(64))
     startDate = db.Column(db.String(64))
@@ -31,12 +35,7 @@ class Post(db.Model):
     faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))
     commitment = db.Column(db.Integer)
     qualifications = db.Column(db.String(2500))
-    students_applied = db.relationship("Apply", back_populates = "post_applied")
-    interests = db.relationship('Interest',
-        secondary = postInterests,
-        primaryjoin=(postInterests.c.post_id == id), 
-        backref=db.backref('postInterests', lazy='dynamic'), 
-        lazy='dynamic')
+    associations = db.relationship('Association', back_populates = 'post')
 
     def get_interests(self):
         return self.interests
@@ -46,27 +45,16 @@ class Post(db.Model):
 
 
 class Interest(db.Model):
+    __tablename__ = 'interest'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
-
-    posts = db.relationship("Post",
-        secondary = postInterests,
-        primaryjoin=(postInterests.c.interest_id == id),
-        backref=db.backref('postInterests',
-        lazy='dynamic'),
-        lazy='dynamic')
-    users = db.relationship('User',
-        secondary = studentInterests,
-        primaryjoin=(studentInterests.c.interest_id == id),
-        backref=db.backref('studentInterests',
-        lazy='dynamic'),
-        lazy='dynamic')
+    associations = db.relationship('Association', back_populates = 'interest')
 
     def __repr__(self):
         return '<ID: {} Name: {}>'.format(self.id,self.name)
 
-class User(db.Model,UserMixin):
-    __tablename__='user'
+class User(db.Model, UserMixin):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     username=db.Column(db.String(120),unique=True,index=True)
@@ -76,12 +64,11 @@ class User(db.Model,UserMixin):
     phone_num=db.Column(db.String(15))
     wsu_id=db.Column(db.String(10),index=True)
     user_type = db.Column(db.String(50))
+    associations = db.relationship('Association', back_populates = 'user')
 
-    __mapper_args__ = {
-        'polymorphic_identity': 'users',
-        'polymorphic_on':user_type
-    }
-    
+    def is_authenticated(self):
+        return True
+
     def __repr__(self):
         return '<ID: {} Username: {}>'.format(self.id,self.username)
     
@@ -90,9 +77,6 @@ class User(db.Model,UserMixin):
     
     def get_password(self, password):
         return check_password_hash(self.password_hash, password)
-   
-    def __repr__(self):
-        return "User %s" % self.name
 
 
 class Faculty(User):
@@ -102,8 +86,6 @@ class Faculty(User):
     __mapper_args__ = {
         'polymorphic_identity': 'Faculty'
     }
-
-
 
 class Student(User):
     __tablename__='student'
@@ -115,15 +97,6 @@ class Student(User):
     languages = db.Column(db.String(1000),default = "")
     prior_exp = db.Column(db.String(10000),default = "")
     applications = db.relationship("Apply", back_populates = "student_applied")
-    interests = db.relationship("Interest",
-        secondary = studentInterests,
-        primaryjoin=(studentInterests.c.user_id == id),
-        backref=db.backref('studentInterests',
-        lazy='dynamic'),
-        lazy='dynamic')
-    __mapper_args__ = {
-        'polymorphic_identity': 'Student',
-    }
     
     def apply(self, thePost):
         if not self.is_applied(thePost):

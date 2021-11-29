@@ -190,9 +190,11 @@ def s_edit_profile():
 def createpost():
     ppost = PostForm()
     if ppost.validate_on_submit(): 
-        newPost = Post(title = ppost.title.data,endDate = ppost.end_date.data, description = ppost.description.data,qualifications=ppost.qualifications.data, startDate = ppost.start_date.data,commitment = ppost.commitment.data, interests = ppost.interest.data,faculty_id = current_user.id)
-        for i in newPost.interests:
-            newPost.interests.append(i)
+        newPost = Post(title = ppost.title.data, endDate = ppost.end_date.data, description = ppost.description.data, 
+            qualifications = ppost.qualifications.data, startDate = ppost.start_date.data, commitment = ppost.commitment.data, 
+            associations = ppost.interest.data, faculty_id = current_user.id)
+        #for i in newPost.associations:
+        #    newPost.associations.append(i)
         db.session.add(newPost)
         db.session.commit()
         flash("Your post has been created.")
