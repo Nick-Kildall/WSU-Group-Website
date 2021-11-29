@@ -151,7 +151,9 @@ def delete(post_id):
     post = Post.query.filter_by(id = post_id).first()
     if post != None:
         for interest in post.interests:
-            post.interests.remove(interest)
+            print("deleting interests:",interest)
+            #post.interests.remove(interest)
+       #  post.interests.clear()
         db.session.delete(post)
         db.session.commit()
     flash('Post deleted!')
@@ -188,14 +190,22 @@ def apply(postid):
         ### creates many-to-many relationship
         current_user.apply(thePost)
         #print(current_user.applications)
-        theApply = Apply.query.filter_by(post_id = postid).first()
+       # theApply = Apply.query.filter_by(post_id = postid).first()
+        str=""
+        allInterests=current_user.interests.all()
+        interest_list = [(i.name) for i in allInterests]
+        for interests in interest_list:
+            print(interests)
+            str = str + " " + interests 
+        
         ### adds varibles from the post and application
         theApplication = Application(student_id = current_user.id, post_id = postid,
             studentDescription = applyForm.studentDescription.data, reference_name = applyForm.reference_name.data,
             reference_email = applyForm.reference_email.data, title = thePost.title, endDate = thePost.endDate, 
             startDate = thePost.startDate, description = thePost.description, commitment = thePost.commitment,
             qualifications = thePost.qualifications, firstname = current_user.firstname, lastname = current_user.lastname,
-            username = current_user.username)
+            username = current_user.username, gpa=current_user.gpa,tech_electives=current_user.tech_electives, languages=current_user.languages,
+            prior_exp=current_user.prior_exp, interests=str)
     
         db.session.add(theApplication)
         db.session.commit()
