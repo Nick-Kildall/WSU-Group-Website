@@ -53,13 +53,15 @@ class Interest(db.Model):
 
     posts = db.relationship("Post",
         secondary = postInterests,
+        back_populates = 'interests', 
         primaryjoin=(postInterests.c.interest_id == id),
-        lazy='joined')
+        lazy='dynamic')
         # changing lazy from 'dynamic' to 'joined'
-    users = db.relationship('User',
+    users = db.relationship('Student',
         secondary = studentInterests,
+        back_populates = 'interests', 
         primaryjoin=(studentInterests.c.interest_id == id),
-        lazy='joined')
+        lazy='dynamic')
         # changing lazy from 'dynamic' to 'joined'
 
     def __repr__(self):
