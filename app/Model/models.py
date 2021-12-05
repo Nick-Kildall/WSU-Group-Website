@@ -18,6 +18,7 @@ studentInterests = db.Table('studentInterests',
 postInterests = db.Table('postInterests',
     db.Column('post_id', db.Integer, db.ForeignKey('post.id')),
     db.Column('interest_id', db.Integer, db.ForeignKey('interest.id'))
+
 )
 
 
@@ -170,6 +171,15 @@ class Application(db.Model):
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
     username = db.Column(db.String(128))
+    
+    gpa = db.Column(db.String(5),default = "")
+    tech_electives = db.Column(db.String(1000),default = "")
+    languages = db.Column(db.String(1000),default = "")
+    prior_exp = db.Column(db.String(10000),default = "")
+    interests=db.Column(db.String(10000),default = "")
+
+
+
     
     def __repr__(self):
         return '<Application class: id {} - title: {}>'.format(self.id, self.title)
