@@ -124,14 +124,15 @@ def test_faculty_register(test_client,init_database):
     WHEN the '/register' form is submitted (POST)
     THEN check that the response is valid and the database is updated correctly
     """
+    #uname = "sakire@wsu.edu",uphn = "1234", ufirstname = "Sakire",ulastname = "Arslan Ay",uwsuid = "7891012", passwd="123"
     # Create a test client using the Flask application configured for testing
     response = test_client.post('/faculty_registration', 
-                          data=dict(username = "selina@wsu.edu", firstname = "Selina", lastname = "Nguyen", phone_num = "3602928820", wsu_id = "11659253", user_type = "Faculty" ),
+                          data=dict(username = "sakire@wsu.edu", firstname = "Sakire", lastname = "Arslan Ay", phone_num = "1234", wsu_id = "7891012", user_type = "Faculty" ),
                           follow_redirects = True)
     assert response.status_code == 200
 
-    s = db.session.query(Faculty).filter(Faculty.username=='selina@wsu.edu')
-    assert s.first().username == 'selina@wsu.edu'
+    s = db.session.query(Faculty).filter(Faculty.username=='sakire@wsu.edu')
+    assert s.first().username == 'sakire@wsu.edu'
     assert s.count() == 1
     print(response.data)
     assert b"Submit" in response.data  
@@ -143,19 +144,19 @@ def test_createpost(test_client,init_database):
     THEN check that the response is valid and login is refused 
     """
     response = test_client.post('/login', 
-                          data=dict(username='selina@wsu.edy', password='123',remember_me=False),
+                          data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
                           follow_redirects = True)
     assert response.status_code == 200
     assert b"Invalid username or password" in response.data
 
-def test_login_logout(request,test_client,init_database):
+def test_faculty_login_logout(request,test_client,init_database):
     """
     GIVEN a Flask application configured for testing
     WHEN the '/login' form is submitted (POST) with correct credentials
     THEN check that the response is valid and login is succesfull 
     """
     response = test_client.post('/login', 
-                          data=dict(username='selina@wsu.edu', password='123',remember_me=False),
+                          data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
                           follow_redirects = True)
     assert response.status_code == 200
     assert b"Welcome to Research Connect!" in response.data
@@ -174,7 +175,7 @@ def test_post(test_client,init_database):
     """
     #login
     response = test_client.post('/login', 
-                        data=dict(username='selina@wsu.edu', password='123',remember_me=False),
+                        data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
                         follow_redirects = True)
     assert response.status_code == 200
     assert b"Welcome to Research Connect!" in response.data
