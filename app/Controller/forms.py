@@ -53,7 +53,7 @@ class PostForm(FlaskForm):
         widget=ListWidget(prefix_label=False),
         option_widget=CheckboxInput() )
     commitment = IntegerField('Commitment', validators=[DataRequired()])
-    submit = SubmitField('Post',  validators=[DataRequired()])
+    submit = SubmitField('Post')
 
 class ApplicationForm(FlaskForm):
     studentDescription = StringField('Description', validators=[DataRequired()])
@@ -61,4 +61,7 @@ class ApplicationForm(FlaskForm):
     reference_email = StringField('Reference Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Submit')
 
+class StatusForm(FlaskForm):
+    status = SelectField('Change Status', choices=["Approved for interview", "Not Hired", "Hired"], validators=[InputRequired()])
+    submit = SubmitField('Submit')
 

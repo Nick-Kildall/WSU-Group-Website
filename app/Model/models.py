@@ -138,6 +138,17 @@ class Student(User):
         else:
             flash("Already applied to post")
     
+    def withdraw(self, thePost):
+        if self.is_applied(thePost):
+            currentApply = Apply.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).first()
+            currentApplication = Application.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).first()
+            db.session.delete(currentApply)
+            db.session.delete(currentApplication)
+            db.session.commit()
+            flash('Withdrew from post {}'.format(thePost.title))
+        else:
+            flash("Did not withdraw - you did not apply to this post")
+    
     def is_applied(self, thePost):
         return (Apply.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).count() > 0)
 
@@ -171,6 +182,7 @@ class Application(db.Model):
     firstname = db.Column(db.String(64))
     lastname = db.Column(db.String(64))
     username = db.Column(db.String(128))
+    status = db.Column(db.String(128))
     
     gpa = db.Column(db.String(5),default = "")
     tech_electives = db.Column(db.String(1000),default = "")
