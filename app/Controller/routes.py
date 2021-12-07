@@ -157,7 +157,6 @@ def createpost():
         db.session.add(newPost)
         db.session.commit()
         flash("Your post has been created.")
-        print("testing: you are in the if statement")
         return redirect(url_for('routes.f_index'))
     return render_template('createpost.html', title='Create Post', form=ppost)
 
