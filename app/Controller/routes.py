@@ -30,6 +30,8 @@ def get_posts(selection):
 @bp_routes.route('/f_index', methods=['GET', 'POST'])
 @login_required
 def f_index():
+    if current_user.user_type != 'Faculty':
+        return redirect(url_for('auth.login'))
     posts = current_user.get_user_posts()
     return render_template('faculty_home.html', posts = posts,all_posts = 0)
 
@@ -37,6 +39,8 @@ def f_index():
 @bp_routes.route('/s_index', methods=['GET', 'POST'])
 @login_required
 def s_index():
+    if current_user.user_type != 'Student':
+        return redirect(url_for('auth.login'))
     interest_list = []
     if (current_user.is_authenticated):
         # pull current user's interests
@@ -77,6 +81,8 @@ def s_index():
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
 @login_required
 def f_edit_profile():
+    if current_user.user_type != 'Faculty':
+        return redirect(url_for('auth.login'))
     eform=FacultyEditForm()
     if request.method=='POST':
         if eform.validate_on_submit():
@@ -96,6 +102,8 @@ def f_edit_profile():
 @bp_routes.route('/s_edit_profile', methods=['GET','POST'])
 @login_required
 def s_edit_profile():
+    if current_user.user_type != 'Student':
+        return redirect(url_for('auth.login'))
     sform = StudentEditForm()
     if request.method=='POST':
         if current_user.user_type == "Student":
@@ -133,6 +141,8 @@ def s_edit_profile():
 @bp_routes.route('/createpost', methods=['GET','POST'])
 @login_required
 def createpost():
+    if current_user.user_type != 'Faculty':
+        return redirect(url_for('auth.login'))
     ppost = PostForm()
     if ppost.validate_on_submit(): 
         newPost = Post(title = ppost.title.data,endDate = ppost.end_date.data, description = ppost.description.data,qualifications=ppost.qualifications.data, startDate = ppost.start_date.data,commitment = ppost.commitment.data, faculty_id = current_user.id)
@@ -164,6 +174,8 @@ def delete(post_id):
 @bp_routes.route('/s_your_app', methods=['GET','POST'])
 @login_required
 def s_your_app():
+    if current_user.user_type != 'Student':
+        return redirect(url_for('auth.login'))
     ### Query all applications to render
     studentApplications = Application.query.filter_by(student_id = current_user.id).all()
     return render_template('s_your_apps.html',title='Your Application', studentApplications = studentApplications)
@@ -171,6 +183,8 @@ def s_your_app():
 @bp_routes.route('/applicants/<post_id>', methods=['GET'])
 @login_required
 def applicants(post_id):
+    if current_user.user_type != 'Faculty':
+        return redirect(url_for('auth.login'))
     thepost = Post.query.filter_by(id = post_id).first()
     if thepost is None:
         flash("Error")
@@ -180,6 +194,8 @@ def applicants(post_id):
 
 @bp_routes.route('/apply/<postid>', methods=['GET','POST'])
 def apply(postid): 
+    if current_user.user_type != 'Student':
+        return redirect(url_for('auth.login'))
     applyForm = ApplicationForm()
     # Applies student to postition
     if applyForm.validate_on_submit(): 
@@ -217,6 +233,8 @@ def apply(postid):
 
 @bp_routes.route('/withdraw/<post_id>', methods=['GET','POST'])
 def withdraw(post_id):
+    if current_user.user_type != 'Student':
+        return redirect(url_for('auth.login'))
     thePost = Post.query.filter_by(id = post_id).first()
     current_user.withdraw(thePost)
     return redirect(url_for("routes.s_index"))
@@ -224,6 +242,8 @@ def withdraw(post_id):
 @bp_routes.route('/allposts', methods=['GET', 'POST'])
 @login_required
 def allposts():
+    if current_user.user_type != 'Faculty':
+        return redirect(url_for('auth.login'))
     posts = Post.query.order_by(Post.id.desc())
     return render_template('faculty_home.html', posts = posts,all_posts = 1)
 
