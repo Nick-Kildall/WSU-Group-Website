@@ -5,7 +5,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import  current_user, login_required
 from flask_wtf.recaptcha.widgets import RecaptchaWidget
 from app.Model.models import Faculty, Student, Post, User, Application,Apply
-from app.Controller.forms import FacultyEditForm, StudentEditForm, PostForm, SortForm, ApplicationForm
+from app.Controller.forms import FacultyEditForm, StatusForm, StudentEditForm, PostForm, SortForm, ApplicationForm
 from config import Config
 
 from app import db
@@ -146,7 +146,7 @@ def createpost():
     ppost = PostForm()
     if ppost.validate_on_submit(): 
         newPost = Post(title = ppost.title.data,endDate = ppost.end_date.data, description = ppost.description.data,qualifications=ppost.qualifications.data, startDate = ppost.start_date.data,commitment = ppost.commitment.data, faculty_id = current_user.id)
-        for i in newPost.interests:
+        for i in ppost.interest.data:
             newPost.interests.append(i)
         db.session.add(newPost)
         db.session.commit()
@@ -163,7 +163,18 @@ def delete(post_id):
         for interest in post.interests:
             print("deleting interests:",interest)
             #post.interests.remove(interest)
-       #  post.interests.clear()
+        #  post.interests.clear()
+
+        ### Changing status of all students who applied to the post
+        # students = []
+
+        # for student_apply in post.students_applied:
+        #     p_id = student_apply.post_id
+        #     students.append(Student.query.filter_by(id = post.p_id).first())
+        
+        # for student in students:
+        #     student.status = "Position is not available"
+
         db.session.delete(post)
         db.session.commit()
     flash('Post deleted!')
@@ -221,7 +232,7 @@ def apply(postid):
             startDate = thePost.startDate, description = thePost.description, commitment = thePost.commitment,
             qualifications = thePost.qualifications, firstname = current_user.firstname, lastname = current_user.lastname,
             username = current_user.username, gpa=current_user.gpa,tech_electives=current_user.tech_electives, languages=current_user.languages,
-            prior_exp=current_user.prior_exp, interests=str)
+            prior_exp=current_user.prior_exp, interests=str, status = "Applied")
     
         db.session.add(theApplication)
         db.session.commit()
@@ -246,5 +257,23 @@ def allposts():
         return redirect(url_for('auth.login'))
     posts = Post.query.order_by(Post.id.desc())
     return render_template('faculty_home.html', posts = posts,all_posts = 1)
+
+@bp_routes.route('/reviewApp/<app_id>', methods=['GET','POST'])
+@login_required
+def reviewApp(app_id):
+    if current_user.user_type != 'Faculty':
+        return redirect(url_for('auth.login'))
+    ### Query all applications to render
+    application = Application.query.filter_by(id = app_id).first()
+    sForm = StatusForm()
+    ### checks to see if status is changed
+    if sForm.validate_on_submit():
+        application.status = sForm.status.data
+        db.session.commit()
+        flash("Application status changed to " + application.status)
+        studentApplications = Application.query.filter_by(post_id = application.post_id).all()
+        return render_template('post_student_list.html', studentApplications = studentApplications)
+    return render_template('reviewApp.html',title='Review Application', application = application, form = sForm)
+
 
 

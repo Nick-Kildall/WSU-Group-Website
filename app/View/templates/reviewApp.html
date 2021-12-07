@@ -1,8 +1,11 @@
-<table class = "posttable" style = "width:100%" valign="top">
+{% extends "base.html" %}
+
+{% block content %}
+<table class = "posttable" style = "width:100%; padding: 10px; background-color: rgb(216, 227, 235);" valign="top">
 
     <td width = "100%">
         <tr> 
-            <td colspan="3"><div class="posttitle"> {{application.title}} - {{application.firstname}} {{application.lastname}} </div>
+            <td colspan="3"><div style="font-weight: bold;"> {{application.title}} - {{application.firstname}} {{application.lastname}} </div>
             </td>
         </tr>
         
@@ -58,20 +61,21 @@
             </td>
         </tr>
         <tr>
-            <td colspan="3"><div class="postmessage"> Status: {{application.status}}
-
+            <td colspan="3"><div class="postmessage"> 
+                {% if form %}
+                <form method = "POST" class = 'formselect'>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class = 'formselect'>
+                        Change Status: {{ form.status() }}
+                        {{ form.submit(class = 'button') }}
+                    </div>
+                {% endif %}
             </div>
-            </td>
-        </tr>
-        <tr> 
-            <td colspan = 3>
-                <div style="text-align: right;">
-                    <form action = "{{ url_for('routes.reviewApp', app_id = application.id) }}" method = "post">
-                        <input type = 'submit', value = 'Review Application', class = 'reviewButton'>
-                    </form>
-                </div>
             </td>
         </tr>
     </td>
 
 </table>
+
+{% endblock %}

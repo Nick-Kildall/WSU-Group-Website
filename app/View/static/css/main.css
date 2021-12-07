@@ -31,6 +31,21 @@ a:hover {
     cursor:pointer;
 }
 
+.reviewButton {
+    width : 170px;
+    padding : 3px;    
+    font-size: 16px;
+    margin : 5px;
+    padding : 5px;
+    border: 1px solid lightgray;
+}
+
+.reviewButton:hover {
+    background-color: 157dd3;
+    color: white;
+    cursor:pointer;
+}
+
 .posttable { 
     width : 100%;
     margin: 0px;
