@@ -12,7 +12,6 @@ from app import create_app, db
 from app.Model.models import User, Student, Faculty, Post, Interest, Apply, Application
 from config import Config
 
-
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite://' # + os.path.join(basedir, 'r_connect.db')
     SECRET_KEY = 'bad-bad-key'
@@ -70,6 +69,7 @@ def init_interests():
         db.session.commit()
     return None
 
+    
 @pytest.fixture
 def init_database():
     
@@ -176,9 +176,9 @@ def test_faculty_register(test_client,init_database):
     s = db.session.query(Faculty).filter(Faculty.username=='nick@wsu.edu')
     assert s.first().username == 'nick@wsu.edu'
     assert s.count() == 1
-    print(s.count())
-    assert b"Sign In" in response.data   
-    assert b"Please log in to access this page." in response.data
+    assert b"Sign In" in response.data
+    assert b"Please log in to access this page." in response.data  
+
 
 def test_student_withdrawal(test_client, init_database):
    
@@ -235,6 +235,7 @@ def test_student_withdrawal(test_client, init_database):
     print(response.data)
     assert response.status_code == 200
     assert b"Sign In" in response.data
+
 def test_createpost(test_client,init_database):
     """
     GIVEN a Flask application configured for testing
@@ -262,6 +263,24 @@ def test_createpost(test_client,init_database):
     assert b"Welcome to Research Connect!" in response.data
     assert b"My test post" in response.data 
     assert b"This is my first test post." in response.data
+    response = test_client.get('/logout',                       
+                          follow_redirects = True)
+    print(response.data)
+    assert response.status_code == 200
+    assert b"Sign In" in response.data
+
+
+def test_faculty_login_logout(request,test_client,init_database):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/login' form is submitted (POST) with correct credentials
+    THEN check that the response is valid and login is succesfull 
+    """
+    response = test_client.post('/login', 
+                          data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
+                          follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
 
     response = test_client.get('/logout',                       
                           follow_redirects = True)
@@ -307,8 +326,136 @@ def test_student_register(test_client,init_database):
     s = db.session.query(Student).filter(Student.username =='sejal@wsu.edu')
     assert s.first().wsu_id == '987654'
     assert s.count() == 1
-    assert b"Sign In" in response.data   
-    assert b"Please log in to access this page." in response.data
+    assert b"Sign In" in response.data
+    assert b"Please log in to access this page." in response.data 
+
+def test_review_application(test_client, init_database):
+    response = test_client.post('/login', 
+                          data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
+                          follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
+
+    response = test_client.get('/createpost')
+    assert response.status_code == 200
+    assert b"Post Research Opportunity" in response.data
+    interests1 = list( map(lambda t: t.id, Interest.query.all()[:3]))  
+    response = test_client.post('/createpost', 
+                          data=dict(title='My fourth application test post', description='This is my third test post.',qualifications="testing qual",
+                          start_date="test1", end_date = "test2", commitment = 1, interest = interests1 ),
+                          follow_redirects = True)
+    c = db.session.query(Post).filter(Post.title =='My fourth application test post')
+    assert c.first().get_interests().count() == 3 #should have 3 tags
+    assert c.count() == 1          
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
+    assert b"My fourth application test post" in response.data 
+    assert b"This is my third test post." in response.data
+
+
+    response = test_client.get('/logout',                       
+                          follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Sign In" in response.data
+
+    response = test_client.post('/login', 
+                          data=dict(username='selina@wsu.edu', password='123',remember_me=False),
+                          follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
+
+    
+    p = db.session.query(Post).filter(Post.title =='My fourth application test post')
+    assert c.first().get_interests().count() == 3 #should have 3 tags
+    assert c.count() == 1 
+    response = test_client.post('/apply/'+str(p.first().id), 
+                        data = dict(studentDescription = 'I am a CS major interested in cybersecurity', reference_name = 'Andy Fallon', reference_email = 'andyfallon@wsu.edu' ),
+                        follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect" in response.data
+
+    response = test_client.get('/logout',                       
+                          follow_redirects = True)
+    print(response.data)
+    assert response.status_code == 200
+    assert b"Sign In" in response.data
+
+    response = test_client.post('/login', 
+                          data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
+                          follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
+    p = db.session.query(Post).filter(Post.title =='My fourth application test post')
+    # # /reviewApp/<app_id>
+    response = test_client.get('/applicants/'+str(p.first().id),follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Applicants" in response.data
+    response= test_client.get('/reviewApp/'+str(p.first().students_applied),follow_redirects=True)
+    assert response.status_code == 200
+    assert b"My fourth application test post - Selina Nguyen"
+    
+    response = test_client.get('/logout',                       
+                          follow_redirects = True)
+    print(response.data)
+    assert response.status_code == 200
+    assert b"Sign In" in response.data
+
+def test_apply(test_client,init_database):
+
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/login' form is submitted (POST) with wrong credentials
+    THEN check that the response is valid and login is refused 
+    """
+    response = test_client.post('/login', 
+                          data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
+                          follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
+
+    response = test_client.get('/createpost')
+    assert response.status_code == 200
+    assert b"Post Research Opportunity" in response.data
+    interests1 = list( map(lambda t: t.id, Interest.query.all()[:3]))  
+    response = test_client.post('/createpost', 
+                          data=dict(title='My second application test post', description='This is my third test post.',qualifications="testing qual",
+                          start_date="test1", end_date = "test2", commitment = 1, interest = interests1 ),
+                          follow_redirects = True)
+    c = db.session.query(Post).filter(Post.title =='My second application test post')
+    assert c.first().get_interests().count() == 3 #should have 3 tags
+    assert c.count() == 1          
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
+    assert b"My second application test post" in response.data 
+    assert b"This is my third test post." in response.data
+
+
+    response = test_client.get('/logout',                       
+                          follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Sign In" in response.data
+
+    response = test_client.post('/login', 
+                          data=dict(username='selina@wsu.edu', password='123',remember_me=False),
+                          follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
+
+    
+    p = db.session.query(Post).filter(Post.title =='My second application test post')
+    assert c.first().get_interests().count() == 3 #should have 3 tags
+    assert c.count() == 1 
+    response = test_client.post('/apply/'+str(p.first().id), 
+                        data = dict(studentDescription = 'I am a CS major interested in cybersecurity', reference_name = 'Andy Fallon', reference_email = 'andyfallon@wsu.edu' ),
+                        follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect" in response.data
+
+    response = test_client.get('/logout',                       
+                          follow_redirects = True)
+    print(response.data)
+    assert response.status_code == 200
+    assert b"Sign In" in response.data
 
 
 def test_review_application(test_client, init_database):
@@ -556,33 +703,11 @@ def test_delete(test_client, init_database):
     assert b"Welcome to Research Connect!" in response.data
     assert b"My fifth application test post" in response.data 
     assert b"This is my fifth test post." in response.data
-
-
     response = test_client.delete('/delete/'+str(c.first().id), follow_redirects = True)
     assert response.status_code == 200                
-
     m =  c = db.session.query(Post).filter(Post.title =='My fifth application test post')
     assert m.count() == 0
     response = test_client.get('/logout',                       
                           follow_redirects = True)
     assert response.status_code == 200
     assert b"Sign In" in response.data
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

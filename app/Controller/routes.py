@@ -13,14 +13,32 @@ from app import db
 bp_routes = Blueprint('routes', __name__)
 bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
 
+# def get_posts(selection):
+#     print(selection)
+#     if selection == "Recommended": #recommended
+#         posts = []
+       
+#         student_interest=current_user.interests
+#         for i in student_interest:
+
+#             print("test")
+#             print(i.name)
+#             # p=Post.query.filter_by(Post.interests == i).all()
+#             # print(p.count())
+#             p=Post.interests.contains(i)
+#             for j in p:
+#                 if j in posts:
+#                     pass
+#                 else:
+#                     posts.append(j)
+#         return posts
+#     elif selection == "View All": # view
+#         return Post.query.order_by(Post.id.desc()).all()
+#     else: # filter by specific interest
+#         return Post.query.filter(Post.interests.any(name = selection)).all()
 def get_posts(selection):
-    if selection == "Recommended": #recommended
-        posts = []
-        available_interests = current_user.interests
-        for interest in available_interests:
-            posts.append(Post.query.filter_by(current_user.interests.contains(interest)).first())
-        return posts
-    elif selection == "View All": # view
+    #print(selection)
+    if selection == "View All": # view
         return Post.query.order_by(Post.id.desc()).all()
     else: # filter by specific interest
         return Post.query.filter(Post.interests.any(name = selection)).all()
@@ -46,12 +64,9 @@ def s_index():
         # pull current user's interests
         available_interests = current_user.interests.all()
         interest_list = [(i.name) for i in available_interests]
-        interest_list.append('Recommended')
+       # interest_list.append('Recommended')
         interest_list.append('View All')
         print(available_interests)
-        
-    else:
-        load_defaults(interest_list)
 
     # create sortform
     sort_form = SortForm()
@@ -63,20 +78,11 @@ def s_index():
         posts = get_posts(sort_form.sort_by.data)
     else:
         posts = Post.query.order_by(Post.id.desc())
-    print(posts)
+    
+    print(type(posts))
     return render_template('student_home.html', posts = posts, form=sort_form)
 
-# '''
-#     if request.method == 'POST':
-#         if sort_form.validate_on_submit():
-#             # pull list of posts
-#             posts = get_posts(sort_form.sort_by.data)
-#             form = SortForm()
-#             return render_template('index.html', posts = posts, form=sort_form)
-#     if request.method == 'GET':
-#         posts = Post.query.order_by(Post.id.desc())
-#         return render_template('index.html', posts = posts, form=sort_form)
-# '''
+
 
 @bp_routes.route('/f_edit_profile', methods=['GET','POST'])
 @login_required
