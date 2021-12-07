@@ -26,6 +26,9 @@
         <td colspan="3">
             {% if current_user.user_type == 'Student' %}
                 {% if current_user.is_applied(post) == false %}
+                    <div class="postmessage"> 
+                        Status: Not Applied
+                    </div>
                     <div style="margin-left: 75%; text-align: right;">
                         <form action = "{{ url_for('routes.apply', postid = post.id) }}" method = "post">
                             <input type = 'submit', value = 'Apply', class = 'button'>
@@ -33,6 +36,9 @@
                     </div>
                 {% endif %}
                 {% if current_user.is_applied(post) == true %}
+                    <div class="postmessage"> 
+                        Status: Applied - check your applications page for updates
+                    </div>
                     <div style="margin-left: 75%; text-align: right;">
                         <form action = "{{ url_for('routes.withdraw', post_id = post.id) }}" method = "get">
                             <input type = "submit" value = "Withdraw", class = 'button'>
@@ -47,17 +53,16 @@
             {% if current_user.user_type == 'Faculty' %}
                 {% if current_user.id == post.faculty_id %}
 
-                    <div style="margin-left: 75%; text-align: right;"></div>
-                        <form action = "{{ url_for('routes.applicants', post_id = post.id) }}" method = "get">
-                            <input type = "submit" value = "Applicants", class = 'button'>
-                        </form>
-                    </div>
-                    <div style="margin-left: 75%; text-align: right;"></div>
-                        <form action = "{{ url_for('routes.delete', post_id = post.id) }}" method = "post">
-                            <input type = "submit" value = "Delete", class = 'button'>
-                        </form>
-                    </div>
-        
+                <style>
+                    form { display: inline;}
+                </style>
+    
+                <form action = "{{ url_for('routes.applicants', post_id = post.id) }}" method = "get">
+                    <input type = "submit" value = "Applicants", class = 'button'>
+                </form>
+                <form action = "{{ url_for('routes.delete', post_id = post.id) }}" method = "post">
+                    <input type = "submit" value = "Delete", class = 'button'>
+                </form>
         
                 {% endif %}
             {% endif %}
