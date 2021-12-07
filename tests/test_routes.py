@@ -136,17 +136,33 @@ def test_faculty_register(test_client,init_database):
     print(response.data)
     assert b"Submit" in response.data  
 
-def test_createpost(test_client,init_database):
+def test_student_register(test_client,init_database):
     """
     GIVEN a Flask application configured for testing
-    WHEN the '/login' form is submitted (POST) with wrong credentials
-    THEN check that the response is valid and login is refused 
+    WHEN the '/register' form is submitted (POST)
+    THEN check that the response is valid and the database is updated correctly
     """
-    response = test_client.post('/login', 
-                          data=dict(username='selina@wsu.edy', password='123',remember_me=False),
-                          follow_redirects = True)
+    # Create a test client using the Flask application configured for testing
+    response = test_client.post('/student_registration', 
+                            data=dict(username = 'selina@wsu.edu',phone_num = '1234', 
+                            firstname = 'Selina',lastname = 'Nguyen',
+                            wsu_id = '1234567',major = 'Computer Science',
+                            gpa= '4.0', grad_date = 'May 2023',
+                            tech_electives = 'CS 121',languages = 'C, C++, Python', 
+                            prior_exp = 'TA for 121',user_type= 'Student', password = '123', password2 = '123'),
+                            follow_redirects = True)
+
     assert response.status_code == 200
-    assert b"Invalid username or password" in response.data
+
+    s = db.session.query(Student).filter(Student.username =='selina@wsu.edu')
+    print(s)
+    assert s.first().wsu_id == '1234567'
+    assert s.count() == 1
+    assert b"Submit" in response.data   
+    assert b"Please log in to access this page." in response.data
+
+
+
 
 def test_login_logout(request,test_client,init_database):
     """
@@ -166,13 +182,30 @@ def test_login_logout(request,test_client,init_database):
     assert response.status_code == 200
     assert b"Sign In" in response.data
 
-def test_post(test_client,init_database):
+
+
+#def test_createpost(test_client,init_database):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/login' form is submitted (POST) with wrong credentials
+    THEN check that the response is valid and login is refused 
+    """
+#    response = test_client.post('/login', 
+#                          data=dict(username='selina@wsu.edy', password='123',remember_me=False),
+#                          follow_redirects = True)
+#    assert response.status_code == 200
+#    assert b"Invalid username or password" in response.data
+
+
+#def test_post(test_client,init_database):
     """
     GIVEN a Flask application configured for testing , after user logs in,
     WHEN the '/postsmile' page is requested (GET)  AND /PostForm' form is submitted (POST)
     THEN check that response is valid and the class is successfully created in the database
     """
-    #login
+
+"""
+ #login
     response = test_client.post('/login', 
                         data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
                         follow_redirects = True)
@@ -226,32 +259,4 @@ def test_post(test_client,init_database):
     # assert b"Please log in to access this page." in response.data   
     
 
-
-def test_student_register(test_client,init_database):
-    """
-    GIVEN a Flask application configured for testing
-    WHEN the '/register' form is submitted (POST)
-    THEN check that the response is valid and the database is updated correctly
-    """
-    #    studentUser = new_student(uname = 'selina@wsu.edu',uphn = '1234', ufirstname = 'Selina',ulastname = 'Nguyen',uwsuid = '1234567',umajor = 'Computer Science',ugpa= '4.0', ugraddate = 'May 2023',utechelectives = 'CS 121',ulanguages = 'C, C++, Python', upriorexp = 'TA for 121', passwd = '123')
-
-    # Create a test client using the Flask application configured for testing
-    response = test_client.post('/student_registration', 
-                            data=dict(username = 'selina@wsu.edu',phone_num = '1234', 
-                            firstname = 'Selina',lastname = 'Nguyen',
-                            wsu_id = '1234567',major = 'Computer Science',
-                            gpa= '4.0', grad_date = 'May 2023',
-                            tech_electives = 'CS 121',languages = 'C, C++, Python', 
-                            prior_exp = 'TA for 121', password = '123', password2 = '123'),
-                            follow_redirects = True)
-
-    assert response.status_code == 200
-
-    s = db.session.query(Student).filter(Student.username =='selina@wsu.edu')
-    print(s)
-    assert s.first().wsu_id == '1234567'
-    assert s.count() == 1
-    assert b"Click to Register" in response.data   
-    assert b"Please log in to access this page." in response.data
-
-
+ """
