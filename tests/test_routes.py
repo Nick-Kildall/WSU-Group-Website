@@ -174,7 +174,7 @@ def test_post(test_client,init_database):
     """
     #login
     response = test_client.post('/login', 
-                        data=dict(username='selina@wsu.edu', password='123',remember_me=False),
+                        data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
                         follow_redirects = True)
     assert response.status_code == 200
     assert b"Welcome to Research Connect!" in response.data
@@ -233,19 +233,23 @@ def test_student_register(test_client,init_database):
     WHEN the '/register' form is submitted (POST)
     THEN check that the response is valid and the database is updated correctly
     """
+    #    studentUser = new_student(uname = 'selina@wsu.edu',uphn = '1234', ufirstname = 'Selina',ulastname = 'Nguyen',uwsuid = '1234567',umajor = 'Computer Science',ugpa= '4.0', ugraddate = 'May 2023',utechelectives = 'CS 121',ulanguages = 'C, C++, Python', upriorexp = 'TA for 121', passwd = '123')
+
     # Create a test client using the Flask application configured for testing
     response = test_client.post('/student_registration', 
-                            data=dict(username = 'sejal@wsu.edu',phone_num = '1234', 
-                            firstname = 'Sejal',lastname = 'Welankar',
-                            wsu_id = '789012345',major = 'Computer Science',
+                            data=dict(username = 'selina@wsu.edu',phone_num = '1234', 
+                            firstname = 'Selina',lastname = 'Nguyen',
+                            wsu_id = '1234567',major = 'Computer Science',
                             gpa= '4.0', grad_date = 'May 2023',
                             tech_electives = 'CS 121',languages = 'C, C++, Python', 
                             prior_exp = 'TA for 121', password = '123', password2 = '123'),
                             follow_redirects = True)
+
     assert response.status_code == 200
 
-    s = db.session.query(Student).filter(Student.username =='sejal@wsu.edu')
-    assert s.first().wsu_id == '789012345'
+    s = db.session.query(Student).filter(Student.username =='selina@wsu.edu')
+    print(s)
+    assert s.first().wsu_id == '1234567'
     assert s.count() == 1
     assert b"Click to Register" in response.data   
     assert b"Please log in to access this page." in response.data
