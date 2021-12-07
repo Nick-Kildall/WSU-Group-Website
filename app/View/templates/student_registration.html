@@ -97,7 +97,9 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %} 
 
-            <p> {{ form.interest }} </p>
+            <p> {{ form.interest.label }} <br>
+                {{form.interest(class = 'formselect')}} 
+            </p>
             <!-- <p> {{ form.interest(class = "forminput") }} </p> -->
 
             

@@ -45,9 +45,6 @@ def student_registration():
         db.session.commit()
         flash("Congratulations, you are now a registered student!")
         return redirect(url_for('routes.s_index'))
-    print(srform.password.errors)
-    print(srform.password.errors)
-    print("out sform")
     return render_template('student_registration.html', title='Student Registration', form=srform)
 
 
