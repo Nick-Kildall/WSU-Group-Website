@@ -6,7 +6,7 @@ Resources:
     https://www.patricksoftwareblog.com/testing-a-flask-application-using-pytest/ 
 """
 import os
-basedir = os.path.abspath(os.path.dirname(__file__))
+#basedir = os.path.abspath(os.path.dirname(__file__))
 import pytest
 from app import create_app, db
 from app.Model.models import User, Student, Faculty, Post, Interest, Apply, Application
@@ -19,8 +19,6 @@ class TestConfig(Config):
     WTF_CSRF_ENABLED = False
     DEBUG = True
     TESTING = True
-
-
 
 @pytest.fixture(scope='module')
 def test_client():
@@ -62,7 +60,6 @@ def new_faculty(uname,uphn, ufirstname,ulastname,uwsuid, passwd):
     user.set_password(passwd)
     return user
     
-
 def init_interests():
     # initialize the interests
     if Interest.query.count() == 0:
@@ -96,14 +93,12 @@ def init_database():
     db.drop_all()
 
 def test_student_register_page(test_client, init_database):
-
 #     """
 #     GIVEN a Flask application configured for testing
 #     WHEN the '/register' page is requested (GET)
 #     THEN check that the response is valid
 #     """
-    # Create a test client using the Flask application configured for testing
-
+# Create a test client using the Flask application configured for testing
     response = test_client.get('/student_registration')
     assert response.status_code == 200
     assert b"Submit" in response.data
@@ -167,7 +162,6 @@ def test_faculty_login_logout(request,test_client,init_database):
     assert response.status_code == 200
     assert b"Sign In" in response.data
 
-
 def test_student_login_logout(request,test_client,init_database):
     """
     GIVEN a Flask application configured for testing
@@ -184,68 +178,6 @@ def test_student_login_logout(request,test_client,init_database):
                           follow_redirects = True)
     assert response.status_code == 200
     assert b"Sign In" in response.data
-
-
-# def test_post(test_client,init_database):
-#     """
-#     GIVEN a Flask application configured for testing , after user logs in,
-#     WHEN the '/postsmile' page is requested (GET)  AND /PostForm' form is submitted (POST)
-#     THEN check that response is valid and the class is successfully created in the database
-#     """
-#     #login
-#     response = test_client.post('/login', 
-#                         data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
-#                         follow_redirects = True)
-#     assert response.status_code == 200
-#     assert b"Welcome to Research Connect!" in response.data
-    
-#     #test the "PostSmile" form 
-#     response = test_client.get('/createpost')
-#     assert response.status_code == 200
-#     assert b"Submit" in response.data
-#     assert b"Post Research Opportunity" in response.data
-    
-#     #test posting a smile story
-#     tags1 = list( map(lambda t: t.id, Interest.query.all()[:12]))  # should only pass 'id's of the tags. See https://stackoverflow.com/questions/62157168/how-to-send-queryselectfield-form-data-to-a-flask-view-in-a-unittest
-#     print("TESTING********************: ", tags1)
-#     response = test_client.post('/createpost', 
-#                           data=dict(title='My test post', description='This is my first test post.',qualifications="testing qual",start_date="test1", end_date = "test2", commitment = 1 ),
-#                           follow_redirects = True)
-#     #print(response.data)
-#     assert response.status_code == 200
-#     assert b"Create Post - Research Connect" in response.data
-#     assert b"My test post" in response.data 
-#     assert b"This is my first test post." in response.data 
-
-#     c = db.session.query(Post).filter(Post.title =='My test post')
-#     # assert c.first().get_interests().count() == 12 #should have 3 tags
-#     assert c.count() >= 1 #There should be at least one post with body "Here is another post."
-
-
-    # tags2 = list( map(lambda t: t.id, Tag.query.all()[1:3]))  # should only pass 'id's of the tags. See https://stackoverflow.com/questions/62157168/how-to-send-queryselectfield-form-data-to-a-flask-view-in-a-unittest
-    # print("TESTING********************: ", tags2)
-    # response = test_client.post('/postsmile', 
-    #                       data=dict(title='Second post', body='Here is another post.',happiness_level=1, tag = tags2),
-    #                       follow_redirects = True)
-    # assert response.status_code == 200
-    # assert b"Welcome to Smile Portal!" in response.data
-    # assert b"Second post" in response.data 
-    # assert b"Here is another post." in response.data 
-
-    # c = db.session.query(Post).filter(Post.body =='Here is another post.')
-    # assert c.first().get_tags().count() == 2  # Should have 2 tags
-    # assert c.count() >= 1 #There should be at least one post with body "Here is another post."
-
-    # assert db.session.query(Post).count() == 2
-
-    # #finally logout
-    # response = test_client.get('/logout',                       
-    #                       follow_redirects = True)
-    # assert response.status_code == 200
-    # assert b"Sign In" in response.data
-    # assert b"Please log in to access this page." in response.data   
-    
-
 
 def test_student_register(test_client,init_database):
     """
@@ -270,7 +202,6 @@ def test_student_register(test_client,init_database):
     assert s.count() == 1
     assert b"Click to Register" in response.data   
     assert b"Please log in to access this page." in response.data
-
 
 def test_createpost(test_client,init_database):
     """
@@ -307,6 +238,34 @@ def test_createpost(test_client,init_database):
     assert b"My test post" in response.data 
     assert b"This is my first test post." in response.data
 
+def test_apply(test_client,init_database):
+    """
+    GIVEN a Flask application configured for testing
+    WHEN the '/login' form is submitted (POST) with wrong credentials
+    THEN check that the response is valid and login is refused 
+    """
+    response = test_client.post('/login', 
+                          data=dict(username='sakire@wsu.edu', password='123',remember_me=False),
+                          follow_redirects = True)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
+
+    response = test_client.get('/createpost')
+    assert response.status_code == 200
+    assert b"Post Research Opportunity" in response.data
+    interests1 = list( map(lambda t: t.id, Interest.query.all()[:3]))  
+    response = test_client.post('/createpost', 
+                          data=dict(title='My application test post', description='This is my first test post.',qualifications="testing qual",
+                          start_date="test1", end_date = "test2", commitment = 1, interest = interests1 ),
+                          follow_redirects = True)
+    c = db.session.query(Post).filter(Post.title =='My application test post')
+    assert c.first().get_interests().count() == 3 #should have 3 tags
+    assert c.count() == 1          
+    print(response.data)
+    assert response.status_code == 200
+    assert b"Welcome to Research Connect!" in response.data
+    assert b"My test post" in response.data 
+    assert b"This is my first test post." in response.data
 
 
 
