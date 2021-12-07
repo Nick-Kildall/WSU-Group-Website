@@ -53,7 +53,7 @@ class PostForm(FlaskForm):
         widget=ListWidget(prefix_label=False),
         option_widget=CheckboxInput() )
     commitment = IntegerField('Commitment', validators=[DataRequired()])
-    submit = SubmitField('Post',  validators=[DataRequired()])
+    submit = SubmitField('Post')
 
 class ApplicationForm(FlaskForm):
     studentDescription = StringField('Description', validators=[DataRequired()])
