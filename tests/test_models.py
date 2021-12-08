@@ -170,27 +170,54 @@ class TestModels(unittest.TestCase):
         self.assertEqual(s1.is_applied(p1), False)
 
     
-    # def test_interests(self):
-    #     f1 = Faculty(username = "emily4ever@wsu.edu", 
-    #         phone_num = "3402045068", firstname = "Emily",
-    #         lastname = "Evergreen", wsu_id = "1990439",
-    #         user_type="Faculty")
-    #     db.session.add(f1)
-    #     db.session.commit()
-    #     self.assertEqual(f1.get_user_posts().all(), [])
-    #     p1 = Post(title = "Summer Internship", startDate = "June 2022", 
-    #         endDate = "August 2022", description = "Data Science",
-    #         qualifications = "Prior internship experience",
-    #         commitment = 40, faculty_id = f1.id)
-        
-    #     interests = ['Blockchain', 'Front End']
-    #     for i in interests:
-    #         p1.interests.append(i)
+    def test_interests(self):
+        f1 = Faculty(username = "emily4ever@wsu.edu", 
+            phone_num = "3402045068", firstname = "Emily",
+            lastname = "Evergreen", wsu_id = "1990439",
+            user_type="Faculty")
+        db.session.add(f1)
+        db.session.commit()
+        self.assertEqual(f1.get_user_posts().all(), [])
 
-    #     db.session.add(p1)
-    #     db.session.commit()
+        ### Post Interests
+        p1 = Post(title = "Summer Internship", startDate = "June 2022", 
+            endDate = "August 2022", description = "Data Science",
+            qualifications = "Prior internship experience",
+            commitment = 40, faculty_id = f1.id)
 
-    #     self.assertEqual(f1.interests.count(), 2)
+        i1 = Interest(name = "AI")
+        p1.interests.append(i1)
+
+        i2 = Interest(name = "Blockchain")
+        p1.interests.append(i2)
+
+        db.session.add(p1)
+        db.session.commit()
+
+        self.assertEqual(p1.get_interests()[0].name, "AI")
+        self.assertEqual(p1.get_interests()[1].name, "Blockchain")
+
+        ### Student Interests
+        s1 = Student(username = "ted4ever@wsu.edu", 
+            phone_num = "3402045009", firstname = "Ted",
+            lastname = "Evergreen", wsu_id = "1990464",
+            major = "CS", gpa = "3.94",
+            grad_date = "01/01/22", tech_electives = "Robotics club",
+            languages = "Python, HTML, CSS, Ruby", prior_exp = "None", user_type="Student")
+
+        db.session.add(s1)
+        db.session.commit()
+
+        i1 = Interest(name = "AI")
+        s1.interests.append(i1)
+
+        db.session.add(s1)
+        db.session.commit()
+
+        self.assertEqual(s1.interests[0].name, "AI")
+
+
+
         
         
 
