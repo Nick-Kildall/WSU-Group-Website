@@ -188,7 +188,7 @@ def delete(post_id):
 
         ### Removing elements from specified relationship
         for apply in post.students_applied:
-            post.students_applied.remove(apply)
+            db.session.delete(apply)
 
         db.session.delete(post)
         db.session.commit()
@@ -252,6 +252,7 @@ def apply(postid):
     
         db.session.add(theApplication)
         db.session.commit()
+        flash('Applied to post {}'.format(thePost.title))
 
         return redirect(url_for("routes.s_index"))
    
@@ -266,6 +267,7 @@ def withdraw(post_id):
     theApplication = Application.query.filter_by(student_id = current_user.id).filter_by(post_id = thePost.id).first()
     theApplication.status = "Not Applied"
     current_user.withdraw(thePost)
+    flash('Withdrew from post {}'.format(thePost.title))
     return redirect(url_for("routes.s_index"))
 
 @bp_routes.route('/allposts', methods=['GET', 'POST'])

@@ -137,9 +137,6 @@ class Student(User):
             newApply = Apply(post_applied = thePost)
             self.applications.append(newApply)
             db.session.commit()
-            flash('Applied to post {}'.format(thePost.title))
-        else:
-            flash("Already applied to post")
     
     def withdraw(self, thePost):
         if self.is_applied(thePost):
@@ -148,9 +145,7 @@ class Student(User):
             db.session.delete(currentApply)
             db.session.delete(currentApplication)
             db.session.commit()
-            flash('Withdrew from post {}'.format(thePost.title))
-        else:
-            flash("Did not withdraw - you did not apply to this post")
+            
     
     def is_applied(self, thePost):
         return (Apply.query.filter_by(student_id = self.id).filter_by(post_id = thePost.id).count() > 0)
