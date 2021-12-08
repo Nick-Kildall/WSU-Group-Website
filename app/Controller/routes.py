@@ -188,7 +188,7 @@ def delete(post_id):
 
         ### Removing elements from specified relationship
         for apply in post.students_applied:
-            post.students_applied.remove(apply)
+            db.session.delete(apply)
 
         db.session.delete(post)
         db.session.commit()

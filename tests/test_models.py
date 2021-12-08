@@ -169,27 +169,28 @@ class TestModels(unittest.TestCase):
 
         self.assertEqual(s1.is_applied(p1), False)
 
+    
+    # def test_interests(self):
+    #     f1 = Faculty(username = "emily4ever@wsu.edu", 
+    #         phone_num = "3402045068", firstname = "Emily",
+    #         lastname = "Evergreen", wsu_id = "1990439",
+    #         user_type="Faculty")
+    #     db.session.add(f1)
+    #     db.session.commit()
+    #     self.assertEqual(f1.get_user_posts().all(), [])
+    #     p1 = Post(title = "Summer Internship", startDate = "June 2022", 
+    #         endDate = "August 2022", description = "Data Science",
+    #         qualifications = "Prior internship experience",
+    #         commitment = 40, faculty_id = f1.id)
+        
+    #     interests = ['Blockchain', 'Front End']
+    #     for i in interests:
+    #         p1.interests.append(i)
 
-    def test_delete(self):
-        f1 = Faculty(username = "emily4ever@wsu.edu", 
-            phone_num = "3402045068", firstname = "Emily",
-            lastname = "Evergreen", wsu_id = "1990439",
-            user_type="Faculty")
-        db.session.add(f1)
-        db.session.commit()
-        self.assertEqual(f1.get_user_posts().all(), [])
-        p1 = Post(title = "Summer Internship", startDate = "June 2022", 
-            endDate = "August 2022", description = "Data Science",
-            qualifications = "Prior internship experience",
-            commitment = 40, faculty_id = f1.id)
-        db.session.add(p1)
-        db.session.commit()
-        self.assertEqual(f1.get_user_posts().count(), 1)
-        self.assertEqual(f1.get_user_posts().first().title, 'Summer Internship')
-        self.assertEqual(f1.get_user_posts().first().startDate, 'June 2022')
-        self.assertEqual(f1.get_user_posts().first().endDate, 'August 2022')
-        self.assertEqual(f1.get_user_posts().first().description, 'Data Science')
-        self.assertEqual(f1.get_user_posts().first().qualifications, 'Prior internship experience')
-        self.assertEqual(f1.get_user_posts().first().commitment, 40)
+    #     db.session.add(p1)
+    #     db.session.commit()
 
+    #     self.assertEqual(f1.interests.count(), 2)
+        
+        
 
