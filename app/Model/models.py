@@ -22,7 +22,6 @@ postInterests = db.Table('postInterests',
 
 )
 
-
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     faculty_id = db.Column(db.String(20),db.ForeignKey('user.id'))

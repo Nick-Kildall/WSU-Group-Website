@@ -166,24 +166,34 @@ def createpost():
 def delete(post_id):
     post = Post.query.filter_by(id = post_id).first()
     if post != None:
+        ### Removing elements from specified relationship
         for interest in post.interests:
-            print("deleting interests:",interest)
-            #post.interests.remove(interest)
-        #  post.interests.clear()
+            post.interests.remove(interest)
 
         ### Changing status of all students who applied to the post
-        # students = []
+        ### I think this portion works
+        applications = []
 
-        # for student_apply in post.students_applied:
-        #     p_id = student_apply.post_id
-        #     students.append(Student.query.filter_by(id = post.p_id).first())
+        for student_apply in post.students_applied:
+            application = Application.query.filter_by(post_id = post_id).filter_by(student_id = student_apply.student_id).first()
+            applications.append(application)
+            print(application)
+            print('attempt')
         
-        # for student in students:
-        #     student.status = "Position is not available"
+        for application in applications:
+            print(application.status)
+            print('try')
+            application.status = "Position is not available"
+            print(application.status)
+
+        ### Removing elements from specified relationship
+        for apply in post.students_applied:
+            post.students_applied.remove(apply)
 
         db.session.delete(post)
         db.session.commit()
-    flash('Post deleted!')
+
+        flash('Post deleted!')
     # posts = Post.query.order_by(Post.id.desc())
     return redirect(url_for('routes.f_index'))
 
@@ -253,6 +263,8 @@ def withdraw(post_id):
     if current_user.user_type != 'Student':
         return redirect(url_for('auth.login'))
     thePost = Post.query.filter_by(id = post_id).first()
+    theApplication = Application.query.filter_by(student_id = current_user.id).filter_by(post_id = thePost.id).first()
+    theApplication.status = "Not Applied"
     current_user.withdraw(thePost)
     return redirect(url_for("routes.s_index"))
 
