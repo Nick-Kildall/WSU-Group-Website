@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask.helpers import flash
+from sqlalchemy.orm import backref
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from flask_login import UserMixin
@@ -48,6 +49,7 @@ class Post(db.Model):
         return self.students_applied
 
 class Interest(db.Model):
+    __tablename__='interest'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
 
@@ -61,6 +63,7 @@ class Interest(db.Model):
         secondary = studentInterests,
         back_populates = 'interests', 
         primaryjoin=(studentInterests.c.interest_id == id),
+        #backref = db.backref('studentInterests', lazy = 'dynamic'),
         lazy='dynamic')
         # changing lazy from 'dynamic' to 'joined'
 
@@ -123,6 +126,7 @@ class Student(User):
         secondary = studentInterests,
         back_populates = 'users', 
         primaryjoin=(studentInterests.c.user_id == id),
+        #backref = db.backref('studentInterests', lazy = 'dynamic'),
         lazy='dynamic')
     __mapper_args__ = {
         'polymorphic_identity': 'Student',
