@@ -12,11 +12,24 @@
         <div class ="nav-container">
         <table>
             <tr>
-                <td><a href="{{ url_for('routes.index') }}" class = "button">Home</a></td>
-                <td><a href="" class = "button"> Post Smile </a></td>
-                <td><a href="" class = "button"> Login </a></td>
-                <td><a href="" class = "button"> Logout </a></td>
-                <td> Current user is: <span class="useritem">________ </span> </td>  
+                {% if current_user.user_type=="Student"%}
+                <td><a href="{{ url_for('routes.s_index') }}" class = "button">Home</a></td>
+                <td><a href="{{url_for('routes.s_your_app')}}" class = "button"> Your Applications </a></td>
+                <td><a href="{{ url_for('routes.s_edit_profile') }}" class = "button"> Student Edit Profile </a></td>
+                <td><a href="{{ url_for('auth.logout') }}" class = "button"> Logout </a></td>
+                <td> Current user is: <span class="useritem"> {{current_user.username}} </span> </td>  
+                {%endif%}
+
+                {% if current_user.user_type=="Faculty"%}
+                <td><a href="{{ url_for('routes.f_index') }}" class = "button">Home</a></td>
+                <td><a href="{{url_for('routes.allposts')}}" class = "button"> All Posts </a></td>
+               
+                <td><a href="{{ url_for('routes.createpost') }}" class = "button"> Create Open Position </a></td>
+                <td><a href="{{ url_for('routes.f_edit_profile') }}" class = "button"> Faculty Edit Profile </a></td>
+                
+                <td><a href="{{ url_for('auth.logout') }}" class = "button"> Logout </a></td>
+                <td> Current user is: <span class="useritem"> {{current_user.username}} </span> </td>  
+                {%endif%}
             </tr>
         </table>
         </div>

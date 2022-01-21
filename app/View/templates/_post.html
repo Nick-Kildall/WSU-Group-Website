@@ -1,0 +1,71 @@
+<table class = "posttable" style = "width:100%" valign="top">
+    <tr> 
+        <td colspan="3"><div class="posttitle"> {{post.title}} </div>
+        </td>
+    </tr>
+    <tr> 
+        <td width = "100%"><div class="postmessage"> 
+            Goal Objective: {{post.description}}
+        </div>
+        </td>
+    </tr>
+    <tr> 
+        <td><div class="postmessage"> Date: {{post.startDate}} - {{post.endDate}} </div>
+        </td>
+    </tr>
+    <tr> 
+        <td><div class="postmessage">  Time Commitment: {{post.commitment}} hours / week </div>
+        </td>
+    </tr>
+    <tr> 
+        <td><div class="postmessage"> Qualifications: {{ post.qualifications }}
+        </div>
+        </td>
+    </tr>
+    <tr> 
+        <td colspan="3">
+            {% if current_user.user_type == 'Student' %}
+                {% if current_user.is_applied(post) == false %}
+                    <div class="postmessage"> 
+                        Status: Not Applied
+                    </div>
+                    <div style="margin-left: 75%; text-align: right;">
+                        <form action = "{{ url_for('routes.apply', postid = post.id) }}" method = "post">
+                            <input type = 'submit', value = 'Apply', class = 'button'>
+                        </form>
+                    </div>
+                {% endif %}
+                {% if current_user.is_applied(post) == true %}
+                    <div class="postmessage"> 
+                        Status: Applied - check your applications page for updates
+                    </div>
+                    <div style="margin-left: 75%; text-align: right;">
+                        <form action = "{{ url_for('routes.withdraw', post_id = post.id) }}" method = "get">
+                            <input type = "submit" value = "Withdraw", class = 'button'>
+                        </form>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {% if current_user.user_type == 'Faculty' %}
+                {% if current_user.id == post.faculty_id %}
+
+                <style>
+                    form { display: inline;}
+                </style>
+    
+                <form action = "{{ url_for('routes.applicants', post_id = post.id) }}" method = "get">
+                    <input type = "submit" value = "Applicants", class = 'button'>
+                </form>
+                <form action = "{{ url_for('routes.delete', post_id = post.id) }}" method = "post">
+                    <input type = "submit" value = "Delete", class = 'button'>
+                </form>
+        
+                {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+</table>

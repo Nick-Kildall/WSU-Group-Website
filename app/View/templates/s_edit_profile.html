@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Student Edit Form</h1>
+    {% if form %}
+        <form action="" method="POST">
+            {{ form.hidden_tag() }}
+
+            <p> {{ form.password.label }} </p>
+            <p> {{ form.password(class = "forminput") }} </p>
+
+            {% for error in form.password.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+
+            <p> {{ form.password2.label }} </p>
+            <p> {{ form.password2(class = "forminput") }} </p>
+
+            {% for error in form.password2.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+
+            <p> {{ form.phone_num.label }} </p>
+            <p> {{ form.phone_num(class = "forminput") }} </p>
+                
+            {% for error in form.phone_num.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %} 
+
+            <p> {{ form.major.label }} </p>
+            <p> {{ form.major(class = "forminput") }} </p>
+                
+            {% for error in form.major.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %} 
+
+            <p> {{ form.gpa.label }} </p>
+            <p> {{ form.gpa(class = "forminput") }} </p>
+                
+            {% for error in form.gpa.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %} 
+            
+            <p> {{ form.grad_date.label }} </p>
+            <p> {{ form.grad_date(class = "forminput") }} </p>
+                
+            {% for error in form.grad_date.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %} 
+
+            <p> {{ form.tech_electives.label }} </p>
+            <p> {{ form.tech_electives(class = "forminput") }} </p>
+                
+            {% for error in form.tech_electives.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %} 
+
+            <p> {{ form.languages.label }} </p>
+            <p> {{ form.languages(class = "forminput") }} </p>
+                
+            {% for error in form.languages.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %} 
+
+            <p> {{ form.prior_exp.label }} </p>
+            <p> {{ form.prior_exp(class = "forminput") }} </p>
+                
+            {% for error in form.prior_exp.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %} 
+
+            <p> {{ form.interest }} </p>
+
+            
+
+            <p> {{ form.submit(class='button') }} </p>
+        </form>
+    {% endif %}
+{% endblock %}

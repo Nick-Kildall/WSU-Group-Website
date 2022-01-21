@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Faculty: Register</h1>
+
+   
+    {%if form%}
+        <form action=""method="POST">
+            {{form.hidden_tag()}}
+
+                <p>{{form.firstname.label}}</p>
+                <p>{{form.firstname(class='forminput')}}</p>
+
+                {%for error in form.firstname.errors%}
+                <span style="color:red;">[{{error}}]</span>
+                {% endfor %}
+
+                <p>{{form.lastname.label}}</p>
+                <p>{{form.lastname(class='forminput')}}</p>
+                
+                {%for error in form.lastname.errors%}
+                <span style="color:red;">[{{error}}]</span>
+                {% endfor %}
+
+                <p>{{form.username.label}}</p>
+                <p>{{form.username(class='forminput')}}</p>
+
+                {%for error in form.username.errors%}
+                <span style="color:red;">[{{error}}]</span>
+                {% endfor %}
+
+                
+
+                <p>{{form.phone_num.label}}</p>
+                <p>{{form.phone_num(class='forminput')}}</p>
+                
+                {%for error in form.phone_num.errors%}
+                <span style="color:red;">[{{error}}]</span>
+                {% endfor %}
+
+                <p>{{form.wsu_id.label}}</p>
+                <p>{{form.wsu_id(class='forminput')}}</p>
+                
+                {%for error in form.wsu_id.errors%}
+                <span style="color:red;">[{{error}}]</span>
+                {% endfor %}
+
+                <p>{{form.password.label}}</p>
+                <p>{{form.password(class='forminput')}}</p>
+
+                {%for error in form.password.errors%}
+                <span style="color:red;">[{{error}}]</span>
+                {% endfor %}
+
+                <p>{{form.password2.label}}</p>
+                <p>{{form.password2(class='forminput')}}</p>
+
+                {%for error in form.password2.errors%}
+                <span style="color:red;">[{{error}}]</span>
+                {% endfor %}
+
+
+                <p>{{form.submit(class='button')}}</p>
+        </form>
+    {%endif%}
+{% endblock %}

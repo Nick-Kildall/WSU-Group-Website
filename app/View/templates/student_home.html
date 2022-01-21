@@ -6,7 +6,7 @@
     <h2>Hello, {{ current_user.firstname }} {{ current_user.lastname }}</h2>
 
     {% if form %}
-    <form action = "http://localhost:5000/index" method = "POST" style = "padding-left:16px;" class = 'formselect'>
+    <form action = "http://localhost:5000/s_index" method = "POST" style = "padding-left:16px;" class = 'formselect'>
         {{ form.hidden_tag() }}
         
         <div class = 'formselect'>
@@ -26,4 +26,5 @@
     {% endfor %}
     </div>
     
+
 {% endblock %}

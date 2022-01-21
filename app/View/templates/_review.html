@@ -1,0 +1,77 @@
+<table class = "posttable" style = "width:100%" valign="top">
+
+    <td width = "100%">
+        <tr> 
+            <td colspan="3"><div class="posttitle"> {{application.title}} - {{application.firstname}} {{application.lastname}} </div>
+            </td>
+        </tr>
+        
+    
+      
+        <tr> 
+            <td colspan="3"><div class="postmessage"> 
+                Self Description:  
+                <br>
+                {{application.studentDescription}}
+            </div>
+            </td>
+
+        </tr>
+        <tr> 
+            <td colspan="3"><div class="postmessage">  Reference Name: {{application.reference_name}}</div>
+            </td>
+
+        </tr>
+        <tr> 
+            <td colspan="3"><div class="postmessage">  Reference Email: {{application.reference_email}} </div>
+            </td>
+
+        </tr>
+        <tr>
+            <td colspan="3"><div class="postmessage"> GPA: {{application.gpa}}
+
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"><div class="postmessage"> Tech Electives: {{application.tech_electives}}
+
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"><div class="postmessage"> Lanuages: {{application.languages}}
+
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"><div class="postmessage"> Prior Experiences: {{application.prior_exp}}
+
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"><div class="postmessage"> Interests: {{application.interests}}
+
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"><div class="postmessage"> Status: {{application.status}}
+
+            </div>
+            </td>
+        </tr>
+        <tr> 
+            <td colspan = 3>
+                <div style="text-align: right;">
+                    <form action = "{{ url_for('routes.reviewApp', app_id = application.id) }}" method = "post">
+                        <input type = 'submit', value = 'Review Application', class = 'reviewButton'>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    </td>
+
+</table>
