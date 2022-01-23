@@ -13,29 +13,6 @@ from app import db
 bp_routes = Blueprint('routes', __name__)
 bp_routes.template_folder = Config.TEMPLATE_FOLDER #'..\\View\\templates'
 
-# def get_posts(selection):
-#     print(selection)
-#     if selection == "Recommended": #recommended
-#         posts = []
-       
-#         student_interest=current_user.interests
-#         for i in student_interest:
-
-#             print("test")
-#             print(i.name)
-#             # p=Post.query.filter_by(Post.interests == i).all()
-#             # print(p.count())
-#             p=Post.interests.contains(i)
-#             for j in p:
-#                 if j in posts:
-#                     pass
-#                 else:
-#                     posts.append(j)
-#         return posts
-#     elif selection == "View All": # view
-#         return Post.query.order_by(Post.id.desc()).all()
-#     else: # filter by specific interest
-#         return Post.query.filter(Post.interests.any(name = selection)).all()
 def get_posts(selection):
     #print(selection)
     if selection == "View All": # view
@@ -64,9 +41,7 @@ def s_index():
         # pull current user's interests
         available_interests = current_user.interests.all()
         interest_list = [(i.name) for i in available_interests]
-       # interest_list.append('Recommended')
         interest_list.append('View All')
-        print(available_interests)
 
     # create sortform
     sort_form = SortForm()
@@ -79,7 +54,6 @@ def s_index():
     else:
         posts = Post.query.order_by(Post.id.desc())
     
-    print(type(posts))
     return render_template('student_home.html', posts = posts, form=sort_form)
 
 
@@ -171,7 +145,6 @@ def delete(post_id):
             post.interests.remove(interest)
 
         ### Changing status of all students who applied to the post
-        ### I think this portion works
         applications = []
 
         for student_apply in post.students_applied:
@@ -226,14 +199,13 @@ def apply(postid):
     applyForm = ApplicationForm()
     # Applies student to postition
     if applyForm.validate_on_submit(): 
+        print("validated")
         thePost = Post.query.filter_by(id = postid).first()
         if thePost is None:
             flash("Post with id '{}' not found").format(postid)
             return redirect(url_for("routes.s_index"))
         ### creates many-to-many relationship
         current_user.apply(thePost)
-        #print(current_user.applications)
-       # theApply = Apply.query.filter_by(post_id = postid).first()
         str=""
         allInterests=current_user.interests.all()
         interest_list = [(i.name) for i in allInterests]
@@ -256,6 +228,7 @@ def apply(postid):
 
         return redirect(url_for("routes.s_index"))
    
+    print("not validated")
     # sends student to application form
     return render_template('apply.html', title='Apply to Research Oppertunity', form=applyForm)
 
