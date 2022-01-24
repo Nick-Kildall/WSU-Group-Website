@@ -1,2 +1,1 @@
-Web: gunicorn app:r_connect
-
+web: gunicorn app:r_connect
